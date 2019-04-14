@@ -310,7 +310,181 @@ public class MainActivity extends AppCompatActivity {
     public void startThread(){
         ThreadForPotentiometer runnable = new ThreadForPotentiometer();
         new Thread(runnable).start();
+
+        ThreadForTDOA getTimeStartEndETiems = new ThreadForTDOA();            //ADDED NEW VC1 - for TDOA calculations
+        new Thread(getTimeStartEndETiems).start();
+
     }
+
+
+
+    class ThreadForTDOA implements Runnable                       //ADDED NEW VC1 - for TDOA calculations
+    {
+        @Override
+        public void run()
+        {
+
+
+            if (stopThread)
+            {
+                return;
+            }
+
+
+            while (true)
+            {
+
+                if (stopThread)
+                {
+                    return;
+                }
+
+
+                try {
+
+                    // byte[] buffer = new byte[4 * 1024];
+                    int bytes;
+                    InputStream tmpIn = null;
+                    tmpIn = btSocket.getInputStream();
+                    DataInputStream mmInstream = new DataInputStream(tmpIn);
+                    bytes = mmInstream.available(); // 344 test
+                    byte[] rawBytes = new byte[bytes];
+                    mmInstream.read(rawBytes);
+                    final String string = new String(rawBytes, "UTF-8");
+
+
+
+
+                    String startTimeForMica = "";     //adding new
+                    String endTimeForMicb = "";     //adding new
+                    String difference = "";     //adding new
+
+
+
+                    for (int x = 0; x < string.length(); x++)  //adding new
+                    {
+
+
+                        if (string.charAt(x) == 'a')            //b for inpur 2
+                        {
+
+                            int valueDigits = 1;
+
+                            while (string.charAt(x + valueDigits) != '\n' )
+                            {
+                                valueDigits += 1;
+                            }
+
+
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n')
+                            {
+                                startTimeForMica = string.substring(x + 1, x + valueDigits);         // to avoid first letter
+                            }
+
+
+                            System.out.println("o " + startTimeForMica);
+
+
+                        }
+
+                        if (string.charAt(x) == 'c')            //b for inpur 2
+                        {
+
+                            int valueDigits = 1;
+
+                            while (string.charAt(x + valueDigits) != '\n' && string.charAt(x + valueDigits) != '\r' )
+                            {
+                                valueDigits += 1;
+                            }
+
+
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n')
+                            {
+                                endTimeForMicb = string.substring(x + 1, x + valueDigits);         // to avoid first letter
+                            }
+
+
+                            System.out.println("t " + endTimeForMicb);
+
+
+                        }
+
+
+                        if (string.charAt(x) == 'V')            //b for inpur 2
+                        {
+
+                            int valueDigits = 3;
+
+
+
+                            while (string.charAt(x + valueDigits) != '\n' && string.charAt(x + valueDigits) != '\r' )
+                            {
+                                valueDigits += 1;
+                            }
+
+
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n')
+                            {
+                                difference = string.substring(x + 1, x + valueDigits);         // to avoid first letter
+                            }
+
+
+                            System.out.println("t " + difference);
+
+
+                        }
+
+
+
+                        //inputC = angle;      //added new  /                     //SHOULD CHANGE INPUT C OTHERWUSE CLASSHES WITH POTENTIOMETER TRHEAD
+
+/*
+                        InputHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Input3TxtView.setText(inputC);
+                            }
+                        });
+*/
+
+
+                    }
+
+
+                    if (difference != "") // ((startTimeForMica != "" && startTimeForMica != null) && (endTimeForMicb != "" && endTimeForMicb != null))
+                    {
+
+                        double distanceBetweenMics = 1.08268;       //33cm ibn feet
+                        float differenceBetweenTimes =  Integer.parseInt(difference) ; // (Integer.parseInt(startTimeForMica)  - Integer.parseInt(endTimeForMicb));
+                        float microSecondsToSeconds =  (differenceBetweenTimes / 1000000);
+                        float secondsTimesFeetPerSec = microSecondsToSeconds * 1125;
+                        float tdoa = secondsTimesFeetPerSec / differenceBetweenTimes;
+                        //double timeDifferenceOfArrival = ((microSecondsToSeconds * 1125) / distanceBetweenMics);
+                        //double rad = Math.acos(timeDifferenceOfArrival);
+                        //double deg = Math.toDegrees(rad);
+                        double rad = Math.acos(tdoa);
+                        double deg = Math.toDegrees(rad);
+
+                        System.out.println(deg);
+                        difference = "";
+
+                    }
+
+
+
+                } catch (Exception e) {}
+
+            }
+
+
+        }
+    }
+
+
+
 
 
     // creating background thread to keep getting potentiometer values
@@ -354,6 +528,12 @@ public class MainActivity extends AppCompatActivity {
 
                     String input3StrValue = "";     //adding new
                     String mic1MaxStrValue = "";     //adding new
+
+
+                    String startTimeForMica = "";     //adding new                 vc1
+                    String endTimeForMicb = "";     //adding new                    vc1
+
+
 
                     for (int x = 0; x < string.length(); x++)  //adding new
                     {
@@ -496,6 +676,56 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         }
+
+
+                       /* if (string.charAt(x) == 'a')            //b for inpur 2     vc1
+                        {
+
+                            int valueDigits = 1;
+
+                            while (string.charAt(x + valueDigits) != '\n' )
+                            {
+                                valueDigits += 1;
+                            }
+
+
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n')
+                            {
+                                startTimeForMica = string.substring(x + 1, x + valueDigits);         // to avoid first letter
+                            }
+
+
+                            System.out.println("o " + startTimeForMica);
+
+
+                        }
+
+                        if (string.charAt(x) == 'c')            //b for inpur 2     vc1
+                        {
+
+                            int valueDigits = 1;
+
+                            while (string.charAt(x + valueDigits) != '\n' && string.charAt(x + valueDigits) != '\r' )
+                            {
+                                valueDigits += 1;
+                            }
+
+
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n')
+                            {
+                                endTimeForMicb = string.substring(x + 1, x + valueDigits);         // to avoid first letter
+                            }
+
+
+                            System.out.println("t " + endTimeForMicb);
+
+
+                        }*/
+
+
+
 
                         inputA = input1StrValue;
                         inputB = input2StrValue;
