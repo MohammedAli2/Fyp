@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import java.util.ArrayList;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -69,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
     private volatile boolean stopThread = false;        //volatiole means that it always gives this variables most upto data value - not cached value
 
+
+    private volatile ArrayList<arrayOfMicResults> micTimesList = new ArrayList<arrayOfMicResults>();        //t3
 
 
 
@@ -308,17 +312,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void startThread(){
-        ThreadForPotentiometer runnable = new ThreadForPotentiometer();
-        new Thread(runnable).start();
+        /*ThreadForPotentiometer runnable = new ThreadForPotentiometer();               //having 2 threads running impacts read performance/accuracy
+        new Thread(runnable).start();*/
 
-        ThreadForTDOA getTimeStartEndETiems = new ThreadForTDOA();            //ADDED NEW VC1 - for TDOA calculations
+        ThreadForTDOA1 getTimeStartEndETiems = new ThreadForTDOA1();            //ADDED NEW VC1 - for TDOA calculations
         new Thread(getTimeStartEndETiems).start();
 
     }
 
 
 
-    class ThreadForTDOA implements Runnable                       //ADDED NEW VC1 - for TDOA calculations
+    class ThreadForTDOA1 implements Runnable                       //ADDED NEW VC1 - for TDOA calculations
     {
         @Override
         public void run()
@@ -342,118 +346,216 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
 
-                    // byte[] buffer = new byte[4 * 1024];
+                    //byte[] buffer = new byte[4 * 1024];
+                    //int bytes;
+                    /*InputStream tmpIn = null;                                      CURRENTLY BEST WORK
+                    tmpIn = btSocket.getInputStream();
+                    DataInputStream mmInstream = new DataInputStream(tmpIn);
+                    //bytes = mmInstream.available(); // 344 test
+                    byte[] rawBytes = new byte[4*1024];
+                    mmInstream.read(rawBytes);
+                    final String string = new String(rawBytes, "UTF-8");*/
+
+                    /*InputStream tmpIn = null;
+                    tmpIn = btSocket.getInputStream();
+                    DataInputStream mmInstream = new DataInputStream(tmpIn);
+                    //bytes = mmInstream.available(); // 344 test
+                    byte[] rawBytes = new byte[4*1024];
+                    mmInstream.read(rawBytes);
+                    final String string = new String(rawBytes, "UTF-8");
+                   // mmInstream.close();
+                    //System.out.println(string);*/
+
+
+                    Thread.sleep(100); //this may actuall improve reading accuracy
+
+                    byte[] buffer = new byte[512];
                     int bytes;
                     InputStream tmpIn = null;
                     tmpIn = btSocket.getInputStream();
-                    DataInputStream mmInstream = new DataInputStream(tmpIn);
-                    bytes = mmInstream.available(); // 344 test
-                    byte[] rawBytes = new byte[bytes];
-                    mmInstream.read(rawBytes);
-                    final String string = new String(rawBytes, "UTF-8");
+                    DataInputStream mmInStream = new DataInputStream(tmpIn);
+                    bytes = mmInStream.read(buffer);
+                    String string = new String(buffer, 0, bytes);
 
 
-
+                    /*InputStream tmpIn2= btSocket.getInputStream();    testing
+                    DataInputStream mmInstream2 = new DataInputStream(tmpIn);
+                    byte[] rawBytes2 = new byte[4*1024];
+                    mmInstream2.read(rawBytes2);
+                    final String string2 = new String(rawBytes2, "UTF-8");*/
 
                     String startTimeForMica = "";     //adding new
                     String endTimeForMicb = "";     //adding new
                     String difference = "";     //adding new
+
+                    String micQtime = "";
+                    String micRtime = "";
+                    String micStime = "";
+
+                    String timeOrder = "";
 
 
 
                     for (int x = 0; x < string.length(); x++)  //adding new
                     {
 
+                          if(string.charAt(x) == 'Q')
+                          {
+                              int valueDigits = 1;
 
-                        if (string.charAt(x) == 'a')            //b for inpur 2
+                              while (string.charAt(x + valueDigits) != 'e')
+                              {
+                                  //char dis = string.charAt(x + valueDigits);
+                                  valueDigits += 1;
+
+                              }
+
+
+
+                              if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n' || string.charAt(x + valueDigits) != 'e')
+                              {
+                                  micQtime = string.substring(x + 1, x + valueDigits);
+                              }
+
+
+                              System.out.println("Q " + micQtime);
+
+                            //  System.out.println( string.substring(1, string.length()));
+                              System.out.println(string);
+                          }
+
+                        if(string.charAt(x) == 'R')
                         {
-
                             int valueDigits = 1;
 
-                            while (string.charAt(x + valueDigits) != '\n' )
+                            while (string.charAt(x + valueDigits) != 'e')
                             {
+                                //char dis = string.charAt(x + valueDigits);
                                 valueDigits += 1;
+
                             }
 
-
-
-                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n')
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n' || string.charAt(x + valueDigits) != 'e')
                             {
-                                startTimeForMica = string.substring(x + 1, x + valueDigits);         // to avoid first letter
+                                micRtime = string.substring(x + 1, x + valueDigits);
                             }
 
 
-                            System.out.println("o " + startTimeForMica);
-
+                            System.out.println("R " + micRtime);
 
                         }
 
-                        if (string.charAt(x) == 'c')            //b for inpur 2
+                        if(string.charAt(x) == 'S')
                         {
-
                             int valueDigits = 1;
 
-                            while (string.charAt(x + valueDigits) != '\n' && string.charAt(x + valueDigits) != '\r' )
+                            while (string.charAt(x + valueDigits) != 'e')
                             {
+                                //char dis = string.charAt(x + valueDigits);
                                 valueDigits += 1;
+
                             }
 
-
-
-                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n')
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n' || string.charAt(x + valueDigits) != 'e')
                             {
-                                endTimeForMicb = string.substring(x + 1, x + valueDigits);         // to avoid first letter
+                                micStime = string.substring(x + 1, x + valueDigits);
                             }
 
 
-                            System.out.println("t " + endTimeForMicb);
-
+                            System.out.println("S " + micStime);
 
                         }
 
+                        if(string.charAt(x) == 'r')
+                        {
+                            int valueDigits = 1;
 
-                        if (string.charAt(x) == 'V')            //b for inpur 2
+                            while (string.charAt(x + valueDigits) != 'e')
+                            {
+                                //char dis = string.charAt(x + valueDigits);
+                                valueDigits += 1;
+
+                            }
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n' || string.charAt(x + valueDigits) != 'e')
+                            {
+                                timeOrder = string.substring(x + 1, x + valueDigits);
+                            }
+
+                            System.out.println("r " + timeOrder);
+
+                        }
+                    }
+
+
+                    if (Integer.parseInt(micQtime) == 0 && Integer.parseInt(micRtime) == 0 && Integer.parseInt(micStime) == 0)
+                    {
+                        //do nothing cause no useful values
+
+                    }
+                    else  //calulate degrees for each
+                    {
+                        int distanceCm = 30; //cm
+                        float distanceFt =  (((float)distanceCm) / (float)30.48); //fr
+                        float speedOfSoundFt = 1125;
+
+                        if (Integer.parseInt(micQtime) == 0)
+                        {
+                            micQtime = null;
+                        }
+                        else
+                        {
+                            float timeDelayInMicroSeconds = Integer.parseInt(micQtime);
+                            float microToSeconds = (timeDelayInMicroSeconds / 1000000);
+                            float distanceSoudnIsDifferennt =  (microToSeconds * speedOfSoundFt);
+                            float adjDivHyp = distanceSoudnIsDifferennt / distanceFt;
+                            float rad = (float)Math.acos(adjDivHyp);
+                            //double rad = Math.acos((Integer.parseInt(micQtime) * speedOfSoundFt) / distanceFt);
+                            double deg = Math.toDegrees(rad);
+                            System.out.println("Angle between m1 and m2 = " + deg);
+                        }
+
+                        if (Integer.parseInt(micRtime) == 0)
+                        {
+                            micRtime = null;
+                        }
+                        else
                         {
 
-                            int valueDigits = 3;
+
+                            float timeDelayInMicroSeconds = Integer.parseInt(micRtime);
+                            float microToSeconds = (timeDelayInMicroSeconds / 1000000);
+                            float distanceSoudnIsDifferennt =  (microToSeconds * speedOfSoundFt);
+                            float adjDivHyp = distanceSoudnIsDifferennt / distanceFt;
+                            float rad = (float)Math.acos(adjDivHyp);
+                            //double rad = Math.acos((Integer.parseInt(micQtime) * speedOfSoundFt) / distanceFt);
+                            double deg = Math.toDegrees(rad);
 
 
-
-                            while (string.charAt(x + valueDigits) != '\n' && string.charAt(x + valueDigits) != '\r' )
-                            {
-                                valueDigits += 1;
-                            }
-
-
-
-                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n')
-                            {
-                                difference = string.substring(x + 1, x + valueDigits);         // to avoid first letter
-                            }
-
-
-                            System.out.println("t " + difference);
-
-
+                            System.out.println("Angle between m1 and m3 = " + deg);
                         }
 
+                        if (Integer.parseInt(micStime) == 0)
+                        {
+                            micStime = null;
+                        }
+                        else
+                        {
+                            float timeDelayInMicroSeconds = Integer.parseInt(micStime);
+                            float microToSeconds = (timeDelayInMicroSeconds / 1000000);
+                            float distanceSoudnIsDifferennt =  (microToSeconds * speedOfSoundFt);
+                            float adjDivHyp = distanceSoudnIsDifferennt / distanceFt;
+                            float rad = (float)Math.acos(adjDivHyp);
+                            //double rad = Math.acos((Integer.parseInt(micQtime) * speedOfSoundFt) / distanceFt);
+                            double deg = Math.toDegrees(rad);
 
-
-                        //inputC = angle;      //added new  /                     //SHOULD CHANGE INPUT C OTHERWUSE CLASSHES WITH POTENTIOMETER TRHEAD
-
-/*
-                        InputHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Input3TxtView.setText(inputC);
-                            }
-                        });
-*/
+                            System.out.println("Angle between m2 and m3 = " + deg);
+                        }
 
 
                     }
 
-
+/*
                     if (difference != "") // ((startTimeForMica != "" && startTimeForMica != null) && (endTimeForMicb != "" && endTimeForMicb != null))
                     {
 
@@ -472,7 +574,7 @@ public class MainActivity extends AppCompatActivity {
                         difference = "";
 
                     }
-
+*/
 
 
                 } catch (Exception e) {}
@@ -764,6 +866,43 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+    }
+
+
+
+
+    class arrayOfMicResults //t3
+    {
+
+        private long m1Time, m2Time, m3Time;
+
+
+
+        public arrayOfMicResults(long mictime1, long mictime2, long mictime3)        //constructor
+        {
+            m1Time = mictime1;
+            m2Time = mictime2;
+            m3Time = mictime3;
+
+        }
+
+
+        long getM1Time()
+        {
+            return m1Time;
+        }
+
+        long getM2Time()
+        {
+            return m2Time;
+        }
+
+        long getM3Time()
+        {
+            return m3Time;
+        }
+
+
     }
 
 
