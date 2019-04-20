@@ -1,5 +1,6 @@
 package com.fypvc.moh.fypwithvc;
 
+import android.content.BroadcastReceiver;
 import android.media.Image;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -347,8 +348,17 @@ public class MainActivity extends AppCompatActivity {
         /*ThreadForPotentiometer runnable = new ThreadForPotentiometer();               //having 2 threads running impacts read performance/accuracy
         new Thread(runnable).start();*/
 
-        ThreadForTDOA1 getTimeStartEndETiems = new ThreadForTDOA1();            //ADDED NEW VC1 - for TDOA calculations
-        new Thread(getTimeStartEndETiems).start();
+       // ThreadForTDOA1 getTimeStartEndETiems = new ThreadForTDOA1();            //ADDED NEW VC1 - for TDOA calculations
+       // new Thread(getTimeStartEndETiems).start();
+
+        ThreadForTDOA2 getTimeStartEndETimes1 = new ThreadForTDOA2();            //ADDED NEW VC1 - for TDOA calculations
+        new Thread(getTimeStartEndETimes1).start();
+
+        /*ThreadForTDOA3 getTimeStartEndETimes2 = new ThreadForTDOA3();            //ADDED NEW VC1 - for TDOA calculations
+        new Thread(getTimeStartEndETimes2).start();
+
+        ThreadForTDOA4 getTimeStartEndETimes3 = new ThreadForTDOA4();            //ADDED NEW VC1 - for TDOA calculations
+        new Thread(getTimeStartEndETimes3).start();*/
 
     }
 
@@ -401,20 +411,29 @@ public class MainActivity extends AppCompatActivity {
 
                    // Thread.sleep(100); //this may actuall improve reading accuracy
 
-                    byte[] buffer = new byte[512];
+ /*                   byte[] buffer = new byte[512];
                     int bytes;
                     InputStream tmpIn = null;
                     tmpIn = btSocket.getInputStream();
                     DataInputStream mmInStream = new DataInputStream(tmpIn);
                     bytes = mmInStream.read(buffer);
                     String string = new String(buffer, 0, bytes);
+*/
+                    final String string;
+                    InputStream inputStream = btSocket.getInputStream();
 
-
-                    /*InputStream tmpIn2= btSocket.getInputStream();    testing
-                    DataInputStream mmInstream2 = new DataInputStream(tmpIn);
-                    byte[] rawBytes2 = new byte[4*1024];
-                    mmInstream2.read(rawBytes2);
-                    final String string2 = new String(rawBytes2, "UTF-8");*/
+                    int byteCount = inputStream.available();
+                    if(byteCount > 0)
+                    {
+                        byte[] rawBytes = new byte[byteCount];
+                        inputStream.read(rawBytes);
+                        string=new String(rawBytes,"UTF-8");
+                        System.out.println("test " + string);
+                    }
+                    else
+                    {
+                        string = "";
+                    }
 
                     String startTimeForMica = "";     //adding new
                     String endTimeForMicb = "";     //adding new
@@ -527,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else  //calulate degrees for each
                     {
-                        int distanceCm = 30; //cm
+                        int distanceCm = 20;//cm;//30; //cm
                         float distanceFt =  (((float)distanceCm) / (float)30.48); //fr
                         float speedOfSoundFt = 1125;
 
@@ -629,7 +648,7 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("BCin " + BCin);
                                 System.out.println("ACin " + ACin);
 
-                                makeDirectionAllEffects(ABout, BCin, ACin);
+                                makeDirectionAllEffects(ABout, BCin, ACin, timeOrder);
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -671,7 +690,7 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("ABin " + ABin);
 
 
-                                makeDirectionAllEffects(ACout, CBin, ABin);
+                                makeDirectionAllEffects(ACout, CBin, ABin, timeOrder);
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -697,7 +716,7 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("BCin " + BCin);
                                 System.out.println("ACin " + ACin);
 
-                                makeDirectionAllEffects(BAout, BCin, ACin);
+                                makeDirectionAllEffects(BAout, BCin, ACin, timeOrder);
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -730,7 +749,7 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("BAin " + BAin);
                                 System.out.println("CAin " + CAin);
 
-                                makeDirectionAllEffects(BCout, BAin, CAin);
+                                makeDirectionAllEffects(BCout, BAin, CAin, timeOrder);
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -772,7 +791,7 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("CBin " + CBin);
                                 System.out.println("ABin " + ABin);
 
-                                makeDirectionAllEffects(CAout, CBin, ABin);
+                                makeDirectionAllEffects(CAout, CBin, ABin, timeOrder);
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -803,7 +822,7 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("BAin " + BAin);
                                 System.out.println("CBout " + CBout);
 
-                                makeDirectionAllEffects(CAin, BAin, CBout);
+                                makeDirectionAllEffects(CAin, BAin, CBout, timeOrder);
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -927,6 +946,7 @@ public class MainActivity extends AppCompatActivity {
 
                         System.out.println("debuging  testing");
 
+
                     }
 
 /*
@@ -959,52 +979,905 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void makeDirectionAllEffects(double angle1, double angle2, double angle3)
+
+    class ThreadForTDOA2 implements Runnable                       //ADDED NEW VC1 - for TDOA calculations
+    {
+        @Override
+        public void run() {
+
+
+            if (stopThread) {
+                return;
+            }
+
+
+            while (true) {
+
+                if (stopThread) {
+                    return;
+                }
+
+
+                try {
+
+
+
+                    final String string;
+                    InputStream inputStream = btSocket.getInputStream();
+
+                    if(inputStream.available() > 0)
+                    {
+                        Thread.sleep(100);                                         ///FIXED THE STREAM ISSUE !!!!
+                    }
+
+                    int byteCount = inputStream.available();
+                    if (byteCount > 0) {
+                        byte[] rawBytes = new byte[byteCount];
+                        inputStream.read(rawBytes);
+                        string = new String(rawBytes, "UTF-8");
+                        //System.out.println("test " + string);
+                        System.out.println("test 1 " + string);
+                    } else {
+                        string = "";
+                    }
+
+
+
+                    String startTimeForMica = "";     //adding new
+                    String endTimeForMicb = "";     //adding new
+                    String difference = "";     //adding new
+
+                    String micQtime = "";
+                    String micRtime = "";
+                    String micStime = "";
+
+                    String timeOrder = "";
+
+
+
+                    for (int x = 0; x < string.length(); x++)  //adding new
+                    {
+
+                        if(string.charAt(x) == 'Q')
+                        {
+                            int valueDigits = 1;
+
+                            while (string.charAt(x + valueDigits) != 'e')
+                            {
+                                //char dis = string.charAt(x + valueDigits);
+                                valueDigits += 1;
+
+                            }
+
+
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n' || string.charAt(x + valueDigits) != 'e')
+                            {
+                                micQtime = string.substring(x + 1, x + valueDigits);
+                            }
+
+
+                            System.out.println("Q " + micQtime);
+
+                            //  System.out.println( string.substring(1, string.length()));
+                            System.out.println(string);
+                        }
+
+                        if(string.charAt(x) == 'R')
+                        {
+                            int valueDigits = 1;
+
+                            while (string.charAt(x + valueDigits) != 'e')
+                            {
+                                //char dis = string.charAt(x + valueDigits);
+                                valueDigits += 1;
+
+                            }
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n' || string.charAt(x + valueDigits) != 'e')
+                            {
+                                micRtime = string.substring(x + 1, x + valueDigits);
+                            }
+
+
+                            System.out.println("R " + micRtime);
+
+                        }
+
+                        if(string.charAt(x) == 'S')
+                        {
+                            int valueDigits = 1;
+
+                            while (string.charAt(x + valueDigits) != 'e')
+                            {
+                                //char dis = string.charAt(x + valueDigits);
+                                valueDigits += 1;
+
+                            }
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n' || string.charAt(x + valueDigits) != 'e')
+                            {
+                                micStime = string.substring(x + 1, x + valueDigits);
+                            }
+
+
+                            System.out.println("S " + micStime);
+
+                        }
+
+                        if(string.charAt(x) == 'r')
+                        {
+                            int valueDigits = 1;
+
+                            while (string.charAt(x + valueDigits) != 'e')
+                            {
+                                //char dis = string.charAt(x + valueDigits);
+                                valueDigits += 1;
+
+                            }
+
+                            if (string.charAt(x + valueDigits) != '\r' || string.charAt(x + valueDigits) != '\n' || string.charAt(x + valueDigits) != 'e')
+                            {
+                                timeOrder = string.substring(x + 1, x + valueDigits);
+                            }
+
+                            System.out.println("r " + timeOrder);
+
+                        }
+                    }
+
+
+                    if (Integer.parseInt(micQtime) == 0 && Integer.parseInt(micRtime) == 0 && Integer.parseInt(micStime) == 0)
+                    {
+                        //do nothing cause no useful values
+
+                    }
+                    else  //calulate degrees for each
+                    {
+                        int distanceCm = 20;//cm;//30; //cm
+                        float distanceFt =  (((float)distanceCm) / (float)30.48); //fr
+                        float speedOfSoundFt = 1125;
+
+                        if (Integer.parseInt(micQtime) == 0)
+                        {
+                            micQtime = null;
+                        }
+                        else
+                        {
+                            float timeDelayInMicroSeconds = Integer.parseInt(micQtime);
+                            float microToSeconds = (timeDelayInMicroSeconds / 1000000);
+                            float distanceSoudnIsDifferennt =  (microToSeconds * speedOfSoundFt);
+                            float adjDivHyp = distanceSoudnIsDifferennt / distanceFt;
+                            float rad = (float)Math.acos(adjDivHyp);
+                            //double rad = Math.acos((Integer.parseInt(micQtime) * speedOfSoundFt) / distanceFt);
+                            double deg = Math.toDegrees(rad);
+                            AB = deg;
+                            System.out.println("Angle between m1 and m2 = " + deg);
+                        }
+
+                        if (Integer.parseInt(micRtime) == 0)
+                        {
+                            micRtime = null;
+                        }
+                        else
+                        {
+
+
+                            float timeDelayInMicroSeconds = Integer.parseInt(micRtime);
+                            float microToSeconds = (timeDelayInMicroSeconds / 1000000);
+                            float distanceSoudnIsDifferennt =  (microToSeconds * speedOfSoundFt);
+                            float adjDivHyp = distanceSoudnIsDifferennt / distanceFt;
+                            float rad = (float)Math.acos(adjDivHyp);
+                            //double rad = Math.acos((Integer.parseInt(micQtime) * speedOfSoundFt) / distanceFt);
+                            double deg = Math.toDegrees(rad);
+                            AC = deg;
+
+                            System.out.println("Angle between m1 and m3 = " + deg);
+                        }
+
+                        if (Integer.parseInt(micStime) == 0)
+                        {
+                            micStime = null;
+                        }
+                        else
+                        {
+                            float timeDelayInMicroSeconds = Integer.parseInt(micStime);
+                            float microToSeconds = (timeDelayInMicroSeconds / 1000000);
+                            float distanceSoudnIsDifferennt =  (microToSeconds * speedOfSoundFt);
+                            float adjDivHyp = distanceSoudnIsDifferennt / distanceFt;
+                            float rad = (float)Math.acos(adjDivHyp);
+                            //double rad = Math.acos((Integer.parseInt(micQtime) * speedOfSoundFt) / distanceFt);
+                            double deg = Math.toDegrees(rad);
+                            BC = deg;
+
+                            System.out.println("Angle between m2 and m3 = " + deg);
+                        }
+
+
+
+                        int singleDirection = -1;
+                        double ABout = 0;
+                        double BCin = 0;
+                        double ACin = 0;
+
+                        double ACout = 0;
+                        double CB = 0;
+                        double CBin = 0;
+                        double ABin = 0;
+
+                        double BA = 0;
+                        double BAout = 0;
+
+                        double BCout = 0;
+                        double BAin = 0;
+                        double CA = 0;
+                        double CAin = 0;
+
+                        double CAout = 0;
+
+                        double CBout = 0;
+
+
+                        switch (timeOrder)
+                        {
+                            case "ABC":
+                                if(AB > 60)
+                                {
+                                    ABout = 210;
+                                }
+                                else {
+                                    ABout = (AB * 2) + 90;
+                                }
+                                //BCin = ((((BC - 30) * 2)  + 30) + 90); changing
+                                BCin = 210 - (BC * 2);
+                                ACin = ((AC * 2) + 90);
+
+                                System.out.println("AB out " + ABout);
+                                System.out.println("BCin " + BCin);
+                                System.out.println("ACin " + ACin);
+
+                                makeDirectionAllEffects(ABout, BCin, ACin, timeOrder);
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+                                break;
+                            case "ACB":
+                                //adding boundary
+                                if(AC > 60)
+                                {
+                                    ACout = 330;
+                                }
+                                else if(AC > 46 && AC < 61)
+                                {
+                                    ACout = (90 - (AB * 2)) + 360 ;
+                                }
+                                else
+                                {
+                                    ACout = (90 - (AB * 2)) ;
+                                }
+
+
+                                CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
+                                CBin = (((CB - 30) * 2)  + 30);
+
+                                if(CBin < 0)
+                                {
+                                    CBin = CBin + 360;
+
+                                }
+
+                                ABin = (90 - (AB * 2));
+
+                                if(ABin < 0)
+                                {
+                                    ABin = ABin + 360;
+                                }
+
+                                System.out.println("ACout " + ACout);
+                                System.out.println("CBin " + CBin);
+                                System.out.println("ABin " + ABin);
+
+
+                                makeDirectionAllEffects(ACout, CBin, ABin, timeOrder);
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+
+                                break;
+                            case "BAC":
+
+                                BA = Math.abs(AB);
+                                if(BA > 60)
+                                {
+                                    BAout = 90;
+                                }
+                                else {
+                                    BAout = ((180 - (120 + BA)) * 2) + 90;
+                                }
+
+                                ACin = ((AC * 2) + 90);
+
+                                //BCin = ((((BC - 30) * 2)  + 30) + 90);  //changing
+                                BCin = 210 - (BC * 2);
+
+                                System.out.println("BAout " + BAout);
+                                System.out.println("BCin " + BCin);
+                                System.out.println("ACin " + ACin);
+
+                                makeDirectionAllEffects(BAout, BCin, ACin, timeOrder);
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+
+                                break;
+                            case "BCA":
+                                if(BC > 60)
+                                {
+                                    BCout = 330;
+                                }
+                                else {
+                                    BCout = (BC * 2) + 210;
+                                }
+
+                                BA = Math.abs(AB);
+
+                                BAin = ((BA * 2) + 210);
+
+                                if(BAin > 360)
+                                {
+                                    BAin = BAin - 360;
+                                }
+
+
+
+                                CA = Math.abs(AC);
+                                CAin = (330 - (CA * 2));
+
+                                System.out.println("BCout " + BCout);
+                                System.out.println("BAin " + BAin);
+                                System.out.println("CAin " + CAin);
+
+                                makeDirectionAllEffects(BCout, BAin, CAin, timeOrder);
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+                                break;
+                            case "CAB":
+                                CA = Math.abs(AC);
+
+                                if(CA > 60)
+                                {
+                                    CAout = 90;
+                                }
+                                else if(CA < 15)
+                                {
+                                    CAout = (90 - ((180 - (120 + CA)) * 2)) + 360;
+                                }
+                                else
+                                {
+                                    CAout = 90 - ((180 - (120 + CA)) * 2);
+                                }
+
+
+                                CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
+                                CBin = (((CB - 30) * 2)  + 30);
+
+                                if(CBin < 0)
+                                {
+                                    CBin = CBin + 360;
+
+                                }
+
+                                ABin = (90 - (AB * 2));
+
+                                if(ABin < 0)
+                                {
+                                    ABin = ABin + 360;
+                                }
+
+                                System.out.println("CAout " + CAout);
+                                System.out.println("CBin " + CBin);
+                                System.out.println("ABin " + ABin);
+
+                                makeDirectionAllEffects(CAout, CBin, ABin, timeOrder);
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+                                break;
+                            case "CBA":
+
+                                CA = Math.abs(AC);
+                                CAin = (330 - (CA * 2));
+
+                                BA = Math.abs(AB);
+                                BAin = ((BA * 2) + 210);
+
+                                if(BAin > 360)
+                                {
+                                    BAin = BAin - 360;
+                                }
+
+                                CB = Math.abs(BC);
+                                if(CB > 60)
+                                {
+                                    CBout = 210;
+                                }
+                                else {
+                                    CBout = Math.abs(((180 - (120 + CB)) * 2)) + 210;
+                                }
+
+                                System.out.println("CAin " + CAin);
+                                System.out.println("BAin " + BAin);
+                                System.out.println("CBout " + CBout);
+
+                                makeDirectionAllEffects(CAin, BAin, CBout, timeOrder);
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+                                break;
+                            case "AB":
+                                if(AB > 60)
+                                {
+                                    ABout = 210;
+                                }
+                                else {
+                                    ABout = (AB * 2) + 90;
+                                }
+                                System.out.println("ABout " + ABout);
+
+                                singleDirection = (int) (ABout / 22.5);
+                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+
+                                break;
+                            case "AC":
+                                //adding boundary
+                                if(AC > 60)
+                                {
+                                    ACout = 330;
+                                }
+                                else if(AC > 46 && AC < 61)
+                                {
+                                    ACout = (90 - (AB * 2)) + 360 ;
+                                }
+                                else {
+                                    ACout = (90 - (AB * 2));
+                                }
+                                System.out.println("ACout " + ACout);
+
+                                singleDirection = (int) (ACout / 22.5);
+                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+                                break;
+                            case "BA":
+                                if(BA > 60)
+                                {
+                                    BAout = 90;
+                                }
+                                else {
+                                    BAout = ((180 - (120 + BA)) * 2) + 90;
+                                }
+                                System.out.println("BAout " + BAout);
+
+                                singleDirection = (int) (BAout / 22.5);
+                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+                                break;
+                            case "CA":
+
+                                CA = Math.abs(AC);
+                                if(CA > 60)
+                                {
+                                    CAout = 90;
+                                }
+                                else if(CA < 15)
+                                {
+                                    CAout = (90 - ((180 - (120 + CA)) * 2)) + 360;
+                                }
+                                else {
+                                    CAout = 90 - ((180 - (120 + CA)) * 2);
+                                }
+
+
+                                System.out.println("CAout " + CAout);
+
+                                singleDirection = (int) (CAout / 22.5);
+                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+                                break;
+                            case "BC":
+                                if(BC > 60)
+                                {
+                                    BCout = 330;
+                                }
+                                else {
+                                    BCout = (BC * 2) + 210;
+                                }
+                                System.out.println("BCout " + BCout);
+
+                                singleDirection = (int) (BCout / 22.5);
+                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+                                break;
+                            case "CB":
+
+                                CB = Math.abs(BC);
+                                if(CB > 60)
+                                {
+                                    CBout = 210;
+                                }
+                                else {
+                                    CBout = Math.abs(((180 - (120 + CB)) * 2)) + 210;
+                                }
+
+                                System.out.println("CBout " + CBout);
+
+                                singleDirection = (int) (CBout / 22.5);
+                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                Thread.sleep(1000);
+                                disableAllDirectionalEffects();
+
+                                break;
+                            default:
+                                System.out.println("Do Nothing");
+                        }
+
+                        System.out.println("debuging  testing");
+
+
+                    }
+
+
+
+                } catch (Exception e) {}
+            }
+        }
+    }
+
+    class ThreadForTDOA3 implements Runnable                       //ADDED NEW VC1 - for TDOA calculations
+    {
+        @Override
+        public void run() {
+
+
+            if (stopThread) {
+                return;
+            }
+
+
+            while (true) {
+
+                if (stopThread) {
+                    return;
+                }
+
+
+                try {
+
+
+                    final String string;
+                    InputStream inputStream = btSocket.getInputStream();
+
+                    int byteCount = inputStream.available();
+                    if (byteCount > 0) {
+                        byte[] rawBytes = new byte[byteCount];
+                        inputStream.read(rawBytes);
+                        string = new String(rawBytes, "UTF-8");
+                        System.out.println("test 2 " + string);
+                        //System.out.println("test " + string);
+                    } else {
+                        string = "";
+                    }
+
+
+
+                } catch (Exception e) {}
+            }
+        }
+    }
+
+    class ThreadForTDOA4 implements Runnable                       //ADDED NEW VC1 - for TDOA calculations
+    {
+        @Override
+        public void run() {
+
+
+            if (stopThread) {
+                return;
+            }
+
+
+            while (true) {
+
+                if (stopThread) {
+                    return;
+                }
+
+
+                try {
+
+
+                    final String string;
+                    InputStream inputStream = btSocket.getInputStream();
+
+                    int byteCount = inputStream.available();
+                    if (byteCount > 0) {
+                        byte[] rawBytes = new byte[byteCount];
+                        inputStream.read(rawBytes);
+                        string = new String(rawBytes, "UTF-8");
+                       // System.out.println("test " + string);
+                        System.out.println("test 3 " + string);
+                    } else {
+                        string = "";
+                    }
+
+
+
+                } catch (Exception e) {}
+            }
+        }
+    }
+
+
+
+
+    void makeDirectionAllEffects(double angle1, double angle2, double angle3, String timeOrder)
     {
         if(angle1 != 0 && angle2 != 0 && angle3 != 0)
         {
-            int indicator1 = (int) (angle1 / 22.5);  //360/16 = 22.5
+
+            int indicator1 = 0;
+            int indicator2 = 0;
+            int indicator3 = 0;
+
+
+
+            if(Double.isNaN(angle1))
+            {
+
+                indicator2 = (int) (angle2 / 22.5);
+                indicator3 = (int) (angle3 / 22.5);
+                indicator1 = indicator2;
+            }
+            else if(Double.isNaN(angle2))
+            {
+                indicator1 = (int) (angle1 / 22.5);
+                indicator3 = (int) (angle3 / 22.5);
+                indicator2 = indicator1;
+            }
+            else if(Double.isNaN(angle3))
+            {
+                indicator1 = (int) (angle1 / 22.5);
+                indicator2 = (int) (angle2 / 22.5);
+                indicator3 = indicator2;
+            }
+            else
+            {
+                indicator1 = (int) (angle1 / 22.5);
+                indicator2 = (int) (angle2 / 22.5);
+                indicator3 = (int) (angle3 / 22.5);
+            }
+
+            /*int indicator1 = (int) (angle1 / 22.5);  //360/16 = 22.5
             int indicator2 = (int) (angle2 / 22.5);
-            int indicator3 = (int) (angle3 / 22.5);
+            int indicator3 = (int) (angle3 / 22.5);*/
 
             int minDirection = 0;
             int msxDirection = 15;
+            int midDirection = minDirection;
 
 
-            if (indicator1 < indicator2 && indicator1 < indicator3)
-            {
-                minDirection = indicator1;
-            }
-            else if (indicator2 < indicator1 && indicator2 < indicator3)
-            {
-                minDirection = indicator2;
-            }
-            else if (indicator3 < indicator1 && indicator3 < indicator2)
-            {
-                minDirection = indicator3;
-            }
 
-            if (indicator1 > indicator2 && indicator1 > indicator3)
+
+            if (indicator1 >= indicator2 && indicator1 > indicator3)
             {
                 msxDirection = indicator1;
             }
-            else if (indicator2 > indicator1 && indicator2 > indicator3)
+            else if (indicator2 > indicator1 && indicator2 >= indicator3)
             {
                 msxDirection = indicator2;
             }
-            else if (indicator3 > indicator1 && indicator3 > indicator2)
+            else if (indicator3 >= indicator1 && indicator3 > indicator2)
             {
                 msxDirection = indicator3;
             }
 
+            if (indicator1 <= indicator2 && indicator1 < indicator3)
+            {
+                minDirection = indicator1;
+            }
+            else if (indicator2 < indicator1 && indicator2 <= indicator3)
+            {
+                minDirection = indicator2;
+            }
+            else if (indicator3 <= indicator1 && indicator3 < indicator2)
+            {
+                minDirection = indicator3;
+            }
 
+
+            if ((indicator1 < indicator2 && indicator1 > indicator3) || (indicator1 > indicator3 && indicator1 < indicator2)) //fixes flow of direction
+            {
+                midDirection = indicator1;
+            }
+            else if ((indicator2 < indicator1 && indicator2 > indicator3) || (indicator2 > indicator1 && indicator2 < indicator3) )
+            {
+                midDirection = indicator2;
+            }
+            else if ((indicator3 < indicator1 && indicator3 > indicator2) || (indicator3 > indicator1 && indicator3 < indicator2))
+            {
+                midDirection = indicator3;
+            }
+            else
+            {
+                midDirection = minDirection;
+            }
+
+
+            if(timeOrder.equals("ABC") || timeOrder.equals("BCA") || timeOrder.equals("CAB")) // anticlockwise
+            {
+                int minToMax = msxDirection - minDirection;
+                int midToMin = (16 - midDirection) + minDirection;
+                int maxToMid = (16 - msxDirection) + midDirection;
+
+                if (minToMax <= midToMin && minToMax <= maxToMid)  //mintomax
+                {
+
+                    for (int index = minDirection ; index <= msxDirection; index++)
+                    {
+                        ImageView direction = directionalIndicators.get(index);
+                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                    }
+
+                }
+                else if (midToMin <= minToMax && midToMin <= maxToMid)  // mid to min
+                {
+                    for (int index = midDirection ; index != minDirection; index++)
+                    {
+                        ImageView direction = directionalIndicators.get(index);
+                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+                        if(index == 16)
+                        {
+                            index = -1; //so that next loops starts at 0
+                        }
+
+                    }
+
+                    ImageView direction = directionalIndicators.get(minDirection);
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+                }
+                else if (maxToMid <= minToMax && maxToMid <= midToMin)  // max to mid
+                {
+                    for (int index = msxDirection ; index != midDirection; index++)
+                    {
+                        ImageView direction = directionalIndicators.get(index);
+                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+                        if(index == 16)
+                        {
+                            index = -1; //so that next loops starts at 0 // could do this when index == 15 for same efffect also
+                        }
+
+                    }
+
+                    ImageView direction = directionalIndicators.get(midDirection);
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                }
+
+            }
+            else if(timeOrder.equals("ACB") || timeOrder.equals("BAC") || timeOrder.equals("CBA")) //clockwise direction
+            {
+                int minToMid = (16 - midDirection) + minDirection;
+                int midToMax = (16 - msxDirection) + midDirection;
+                int maxToMin = msxDirection - minDirection;
+
+                if (minToMid <= midToMax && minToMid <= maxToMin)  //minToMid
+                {
+                    for (int index = minDirection; index != midDirection; index--)
+                    {
+                        ImageView direction = directionalIndicators.get(index);
+                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+                        if(index == 0)
+                        {
+                            index =16; //so that next loops starts at 15
+                        }
+                    }
+
+                    //now do the max direction
+                    ImageView direction = directionalIndicators.get(midDirection);
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                }
+                else if (midToMax <= minToMid && midToMax <= maxToMin)  // midToMax
+                {
+                    for (int index = midDirection; index != msxDirection; index--)
+                    {
+                        ImageView direction = directionalIndicators.get(index);
+                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+                        if(index == 0)
+                        {
+                            index =16; //so that next loops starts at 15
+                        }
+                    }
+
+                    //now do the max direction
+                    ImageView direction = directionalIndicators.get(msxDirection);
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+                }
+                else if (maxToMin <= midToMax && maxToMin <= minToMid)  //maxToMin
+                {
+                    for (int index = msxDirection; index <= minDirection; index--)
+                    {
+                        ImageView direction = directionalIndicators.get(index);
+                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                    }
+
+                }
+            }
+
+
+
+           /* if(timeOrder.equals("ACB") || timeOrder.equals("BAC") || timeOrder.equals("CBA")) //clockwise direction
+            {
+
+                for (int index = minDirection; index != msxDirection; index--)
+                {
+                    ImageView direction = directionalIndicators.get(index);
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+                    if(index == 0)
+                    {
+                        index =16; //so that next loops starts at 15
+                    }
+                }
+
+                //now do the max direction
+                ImageView direction = directionalIndicators.get(msxDirection);
+                direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+            }
+            else if(timeOrder.equals("ABC") || timeOrder.equals("BCA") || timeOrder.equals("CAB")) //if anticlockwise direction
+            {
+
+                for (int index = msxDirection ; index != minDirection; index++)
+                {
+                    ImageView direction = directionalIndicators.get(index);
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+                    if(index == 16)
+                    {
+                        index = 0; //so that next loops starts at 15
+                    }
+                }
+
+                //now do the max direction
+                ImageView direction = directionalIndicators.get(minDirection);
+                direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+            }*/
+
+/*
             for (int index = minDirection; index <= msxDirection; index++)
             {
                 ImageView direction = directionalIndicators.get(index);
                 direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
 
             }
-
+*/
 
         }
 
