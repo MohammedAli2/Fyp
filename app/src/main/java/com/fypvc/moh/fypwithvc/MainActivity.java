@@ -1454,6 +1454,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 break;
                             case "BA":
+                                BA = Math.abs(AB);
                                 if(BA > 60)
                                 {
                                     BAout = 90;
@@ -1733,11 +1734,14 @@ public class MainActivity extends AppCompatActivity {
                 if (minToMax <= midToMin && minToMax <= maxToMid)  //mintomax
                 {
 
-                    for (int index = minDirection ; index <= msxDirection; index++)
+                    for (int index = minDirection ; index != msxDirection; index++)
                     {
                         ImageView direction = directionalIndicators.get(index);
                         direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
                     }
+
+                    ImageView direction = directionalIndicators.get(msxDirection);
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
 
                 }
                 else if (midToMin <= minToMax && midToMin <= maxToMid)  // mid to min
@@ -1820,11 +1824,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if (maxToMin <= midToMax && maxToMin <= minToMid)  //maxToMin
                 {
-                    for (int index = msxDirection; index <= minDirection; index--)
+                    for (int index = msxDirection; index != minDirection; index--)
                     {
                         ImageView direction = directionalIndicators.get(index);
                         direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
                     }
+
+                    ImageView direction = directionalIndicators.get(minDirection);
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
 
                 }
             }
