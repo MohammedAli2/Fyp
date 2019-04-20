@@ -866,6 +866,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 break;
                             case "BA":
+                                BA = Math.abs(AB);
                                 if(BA > 60)
                                 {
                                     BAout = 90;
@@ -1736,20 +1737,35 @@ public class MainActivity extends AppCompatActivity {
 
                     for (int index = minDirection ; index != msxDirection; index++)
                     {
-                        ImageView direction = directionalIndicators.get(index);
-                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        if(index == indicator1)
+                        {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        }
+                        else {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                        }
                     }
 
                     ImageView direction = directionalIndicators.get(msxDirection);
-                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
 
                 }
-                else if (midToMin <= minToMax && midToMin <= maxToMid)  // mid to min
+                else if (midToMin <= minToMax && midToMin <= maxToMid)  // mid to minroosterteeth
                 {
                     for (int index = midDirection ; index != minDirection; index++)
                     {
-                        ImageView direction = directionalIndicators.get(index);
-                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+
+                        if(index == indicator1)
+                        {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        }
+                        else {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                        }
 
                         if(index == 16)
                         {
@@ -1759,15 +1775,22 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     ImageView direction = directionalIndicators.get(minDirection);
-                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
 
                 }
                 else if (maxToMid <= minToMax && maxToMid <= midToMin)  // max to mid
                 {
                     for (int index = msxDirection ; index != midDirection; index++)
                     {
-                        ImageView direction = directionalIndicators.get(index);
-                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        if(index == indicator1)
+                        {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        }
+                        else {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                        }
 
                         if(index == 16)
                         {
@@ -1777,7 +1800,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     ImageView direction = directionalIndicators.get(midDirection);
-                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
                 }
 
             }
@@ -1791,8 +1814,15 @@ public class MainActivity extends AppCompatActivity {
                 {
                     for (int index = minDirection; index != midDirection; index--)
                     {
-                        ImageView direction = directionalIndicators.get(index);
-                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        if(index == indicator1)
+                        {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        }
+                        else {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                        }
 
                         if(index == 0)
                         {
@@ -1802,14 +1832,21 @@ public class MainActivity extends AppCompatActivity {
 
                     //now do the max direction
                     ImageView direction = directionalIndicators.get(midDirection);
-                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
                 }
                 else if (midToMax <= minToMid && midToMax <= maxToMin)  // midToMax
                 {
                     for (int index = midDirection; index != msxDirection; index--)
                     {
-                        ImageView direction = directionalIndicators.get(index);
-                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        if(index == indicator1)
+                        {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        }
+                        else {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                        }
 
                         if(index == 0)
                         {
@@ -1819,19 +1856,27 @@ public class MainActivity extends AppCompatActivity {
 
                     //now do the max direction
                     ImageView direction = directionalIndicators.get(msxDirection);
-                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
 
                 }
                 else if (maxToMin <= midToMax && maxToMin <= minToMid)  //maxToMin
                 {
                     for (int index = msxDirection; index != minDirection; index--)
                     {
-                        ImageView direction = directionalIndicators.get(index);
-                        direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        if(index == indicator1)
+                        {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                        }
+                        else {
+                            ImageView direction = directionalIndicators.get(index);
+                            direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                        }
+
                     }
 
                     ImageView direction = directionalIndicators.get(minDirection);
-                    direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                    direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
 
                 }
             }
