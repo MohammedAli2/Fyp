@@ -2,6 +2,7 @@ package com.fypvc.moh.fypwithvc;
 
 import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
@@ -148,7 +149,17 @@ public class MainActivity extends AppCompatActivity {
         premadeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogBoxtts();
+                SharedPreferences load = getSharedPreferences("Preferences", 0);        //loadSave
+                String saved = load.getString("premades", "");
+                String[] unloadPremades = saved.split(",");
+                ArrayList<String> savedPremadeArray= new ArrayList<String>();
+                for(int i = 0; i < unloadPremades.length; i++)
+                {
+                    //savedPremadeArray.add(unloadPremades[i]);
+                    premadeBtnArray.set(i, unloadPremades[i]);
+                }
+
+                dialogBoxtts();     //load dialog
             }
         });
 
@@ -164,6 +175,10 @@ public class MainActivity extends AppCompatActivity {
         premadeBtnArray.add("");
         premadeBtnArray.add("");
         premadeBtnArray.add("");
+
+
+
+
 
         //ETTS
 
@@ -604,6 +619,18 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
+                StringBuilder sb = new StringBuilder();
+                for(String allPremadesStr : premadeBtnArray)
+                {
+                    sb.append(allPremadesStr);
+                    sb.append(",");
+                }
+
+                SharedPreferences saving = getSharedPreferences("Preferences", 0);
+                SharedPreferences.Editor editSave = saving.edit();
+                editSave.putString("premades", sb.toString());
+                editSave.commit();
+
             }
             });
 
@@ -611,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                //dialogBoxtts();
+
 
             }
         });
