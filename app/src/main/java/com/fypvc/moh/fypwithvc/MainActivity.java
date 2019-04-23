@@ -1,9 +1,12 @@
 package com.fypvc.moh.fypwithvc;
 
 import android.content.BroadcastReceiver;
+import android.content.DialogInterface;
 import android.media.Image;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 //import android.os.Build;
 //import android.os.VibrationEffect;
@@ -16,9 +19,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +33,8 @@ import android.widget.Toast;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Array;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +45,22 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    //TTS
+    Button ttsBtn;
+    EditText ttsET;
+    TextToSpeech ttsObject;
+    Button premadeBtn;
+    private ArrayList<String> premadeBtnArray = new ArrayList<String>();
+
+    Button pm1;
+    Button pm2;
+    Button pm3;
+    Button pm4;
+    Button pm5;
+    //ETTS
+
+
 
 
     Button btnVibrationOn, btnVibrationOff;
@@ -93,6 +117,55 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        //TTS
+        ttsBtn = (Button) findViewById(R.id.ttsButton);
+        ttsET = (EditText) findViewById(R.id.editText);
+
+        premadeBtn = (Button) findViewById(R.id.premadeBtn);
+
+
+        ttsObject = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+        @Override
+        public void onInit(int status)
+        {
+            if(status != TextToSpeech.ERROR)
+            {
+                ttsObject.setLanguage(Locale.UK);
+            }
+        }
+        });
+
+        ttsBtn.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View view)
+         {
+             ttsObject.speak(ttsET.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+         }
+        });
+
+
+        premadeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogBoxtts();
+            }
+        });
+
+
+    //    pm1 = (Button) findViewById(R.id.premade1);
+    /*    pm2 = (Button) findViewById(R.id.premade2);
+        pm3 = (Button) findViewById(R.id.premade3);
+        pm4 = (Button) findViewById(R.id.premade4);
+        pm5 = (Button) findViewById(R.id.premade5);*/
+
+        premadeBtnArray.add("");
+        premadeBtnArray.add("");
+        premadeBtnArray.add("");
+        premadeBtnArray.add("");
+        premadeBtnArray.add("");
+
+        //ETTS
 
         btnCalibrateMic = (Button) findViewById(R.id.calibtrateBtn); //adding new
 
@@ -318,8 +391,235 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //tts
+    private void dialogBoxtts()
+    {
+        AlertDialog.Builder dialogBoxBuilder = new AlertDialog.Builder(this);
+        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+        //pm1 = (Button) findViewById(R.id.premade1);
 
 
+
+        View premadeView = layoutInflater.inflate(R.layout.dialog_box_for_tts_premades, null);
+
+        pm1 = premadeView.findViewById(R.id.premade1);
+        pm2 = premadeView.findViewById(R.id.premade2);
+        pm3 = premadeView.findViewById(R.id.premade3);
+        pm4 = premadeView.findViewById(R.id.premade4);
+        pm5 = premadeView.findViewById(R.id.premade5);
+
+        if (premadeBtnArray.get(0) != "")
+        {
+            pm1.setText(premadeBtnArray.get(0));
+        }
+
+        if (premadeBtnArray.get(1) != "")
+        {
+            pm2.setText(premadeBtnArray.get(1));
+        }
+
+        if (premadeBtnArray.get(2) != "")
+        {
+            pm3.setText(premadeBtnArray.get(2));
+        }
+
+        if (premadeBtnArray.get(3) != "")
+        {
+            pm4.setText(premadeBtnArray.get(3));
+        }
+
+        if (premadeBtnArray.get(4) != "")
+        {
+            pm5.setText(premadeBtnArray.get(4));
+        }
+
+        dialogBoxBuilder.setView(premadeView);
+
+        pm1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ttsET.setText(pm1.getText().toString());
+
+
+            }
+        });
+
+        pm1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogBoxtts2(pm1);
+
+                return true;
+            }
+        });
+
+        pm2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ttsET.setText(pm2.getText().toString());
+
+
+            }
+        });
+
+        pm2.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogBoxtts2(pm2);
+                return true;
+            }
+        });
+
+        pm3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ttsET.setText(pm3.getText().toString());
+
+
+            }
+        });
+
+        pm3.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogBoxtts2(pm3);
+                return true;
+            }
+        });
+
+        pm4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ttsET.setText(pm4.getText().toString());
+
+
+            }
+        });
+
+        pm4.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogBoxtts2(pm4);
+                return true;
+            }
+        });
+
+        pm5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ttsET.setText(pm5.getText().toString());
+
+
+            }
+        });
+
+        pm5.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogBoxtts2(pm5);
+                return true;
+            }
+        });
+
+
+
+      /*  dialogBoxBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                /*LinearLayout ll = (LinearLayout) findViewById(R.id.testLyt);
+                Button newPremadeButton = new Button(MainActivity.this);
+                newPremadeButton.setText(textFromPremadeSpeech.getText().toString());
+                newPremadeButton.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                ll.addView(newPremadeButton);
+                premadeBtnArray.add(newPremadeButton);
+                //Toast.makeText(MainActivity.this, "Successfully Added Premade", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });*/
+
+
+        dialogBoxBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AlertDialog premadeDialogHasBeenSetUp = dialogBoxBuilder.create();
+        dialogBoxBuilder.show();
+        //getResources().getDisplayMetrics()
+
+
+    }
+
+
+    private void dialogBoxtts2(final Button premadeBtnSelected)
+    {
+        AlertDialog.Builder dialogBoxBuilder2 = new AlertDialog.Builder(this);
+        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+        View premadeView = layoutInflater.inflate(R.layout.edit_premade_text, null);
+        final EditText textForPremadeSpeech = (EditText)premadeView.findViewById(R.id.premadeEditTxt);
+        dialogBoxBuilder2.setView(premadeView);
+
+
+
+        dialogBoxBuilder2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                int premadeNumber = -1;
+                //Button testBtn;
+                if (premadeBtnSelected.getId() == pm1.getId())
+                {
+                    pm1.setText(textForPremadeSpeech.getText().toString());
+                    premadeNumber = 0;
+                }
+                else if (premadeBtnSelected.getId() == pm2.getId())
+                {
+                    pm2.setText(textForPremadeSpeech.getText().toString());
+                    premadeNumber = 1;
+                }
+                else if (premadeBtnSelected.getId() == pm3.getId())
+                {
+                    pm3.setText(textForPremadeSpeech.getText().toString());
+                    premadeNumber = 2;
+                }
+                else if (premadeBtnSelected.getId() == pm4.getId())
+                {
+                    pm4.setText(textForPremadeSpeech.getText().toString());
+                    premadeNumber = 3;
+                }
+                else if (premadeBtnSelected.getId() == pm5.getId())
+                {
+                    pm5.setText(textForPremadeSpeech.getText().toString());
+                    premadeNumber = 4;
+                }
+
+                //pm1.setText(textForPremadeSpeech.getText().toString());
+
+                if(textForPremadeSpeech.getText().toString() != "")
+                {
+                    premadeBtnArray.set(premadeNumber, textForPremadeSpeech.getText().toString());
+                }
+
+
+            }
+            });
+
+        dialogBoxBuilder2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                //dialogBoxtts();
+
+            }
+        });
+
+
+        dialogBoxBuilder2.show();
+    }
+    //etts
 
     private void setVibrationOnOff(String n){
         if(n == "b")
