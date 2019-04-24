@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.fypvc.moh.fypwithvc"
-        minSdkVersion 14
+        minSdkVersion 16 //STT WAS 14 droidspeech forces to increase which is fine
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -25,4 +25,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    compile 'com.github.vikramezhil:DroidSpeech:v2.0.3'    //STT
 }

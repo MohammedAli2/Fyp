@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.Image;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,18 +26,26 @@ import android.bluetooth.BluetoothSocket;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.vikramezhil.droidspeech.DroidSpeech; //STT
+import com.vikramezhil.droidspeech.OnDSListener; //STT
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Array;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
@@ -45,7 +56,7 @@ import java.util.ArrayList;
 
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnDSListener {                         //STT implements OnDSListner
 
     //TTS
     Button ttsBtn;
@@ -62,6 +73,20 @@ public class MainActivity extends AppCompatActivity {
     //ETTS
 
 
+    //STT
+    TextView speechToOnScreenText;
+    ScrollView scrollSTT;
+    Switch sttOnOff;
+    DroidSpeech droidSpeech;
+    private ArrayList<String> triggerArray = new ArrayList<String>();
+    private Button triggerWordsBtn;
+
+    Button t1;
+    Button t2;
+    Button t3;
+    Button t4;
+    Button t5;
+    //ESTT
 
 
     Button btnVibrationOn, btnVibrationOff;
@@ -178,9 +203,52 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
         //ETTS
+
+
+
+        //STT
+        speechToOnScreenText = findViewById(R.id.speechToTextTxtVw);
+        scrollSTT = findViewById(R.id.SpeechToTextScrollView);
+        sttOnOff= findViewById(R.id.sppSwitch);
+        triggerWordsBtn = findViewById(R.id.sppTriggerBtn);
+
+        //DroidSpeech droidSpeech = new DroidSpeech(this, null);// made global
+        droidSpeech = new DroidSpeech(this, null);
+
+        droidSpeech.setOnDroidSpeechListener(this);
+
+        sttOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    droidSpeech.startDroidSpeechRecognition();
+                } else {
+                    droidSpeech.closeDroidSpeechOperations();
+                }
+            }
+        });
+
+
+        triggerArray.add("");
+        triggerArray.add("");
+        triggerArray.add("");
+        triggerArray.add("");
+        triggerArray.add("");
+
+        triggerWordsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                dialogSTT1();     //load dialog
+            }
+        });
+
+        //droidSpeech.startDroidSpeechRecognition();
+        //droidSpeech.closeDroidSpeechOperations();
+        //ESTT
+
+
 
         btnCalibrateMic = (Button) findViewById(R.id.calibtrateBtn); //adding new
 
@@ -2595,7 +2663,239 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    //STT
+    @Override
+    public void onDroidSpeechSupportedLanguages(String currentSpeechLanguage, List<String> supportedSpeechLanguages) {
+
+    }
+
+    @Override
+    public void onDroidSpeechRmsChanged(float rmsChangedValue) {
+
+    }
+
+    @Override
+    public void onDroidSpeechLiveResult(String liveSpeechResult) {
+        //System.out.println(liveSpeechResult);
+        //String timeStamp = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        speechToOnScreenText.append(currentDateTimeString + " : "  + liveSpeechResult + "\n");
+        System.out.println("TESTSSSS " + liveSpeechResult);
+        scrollSTT.fullScroll(View.FOCUS_DOWN); //scrolls down
+        if(liveSpeechResult.toLowerCase().contains("test".toLowerCase()))
+        {
+            vibratePhone();
+        }
 
 
+    }
+
+    @Override
+    public void onDroidSpeechFinalResult(String finalSpeechResult) {
+        //System.out.println(finalSpeechResult);
+    }
+
+    @Override
+    public void onDroidSpeechClosedByUser() {
+
+    }
+
+    @Override
+    public void onDroidSpeechError(String errorMsg) {
+
+    }
+
+//https://stackoverflow.com/questions/13950338/how-to-make-an-android-device-vibrate
+    private void vibratePhone() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(500);
+        }
+    }
+
+
+
+    private void dialogSTT1()
+    {
+        AlertDialog.Builder dialogBoxBuilder = new AlertDialog.Builder(this);
+        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+        View triggersView = layoutInflater.inflate(R.layout.dialogbox_trigger_words, null);
+
+        t1 = triggersView.findViewById(R.id.trigger1);
+        t2 = triggersView.findViewById(R.id.trigger2);
+        t3 = triggersView.findViewById(R.id.trigger3);
+        t4 = triggersView.findViewById(R.id.trigger4);
+        t5 = triggersView.findViewById(R.id.trigger5);
+
+        if (triggerArray.get(0) != "")
+        {
+            t1.setText(triggerArray.get(0));
+        }
+
+        if (triggerArray.get(1) != "")
+        {
+            t2.setText(triggerArray.get(1));
+        }
+
+        if (triggerArray.get(2) != "")
+        {
+            t3.setText(triggerArray.get(2));
+        }
+
+        if (triggerArray.get(3) != "")
+        {
+            t4.setText(triggerArray.get(3));
+        }
+
+        if (triggerArray.get(4) != "")
+        {
+            t5.setText(triggerArray.get(4));
+        }
+
+        dialogBoxBuilder.setView(triggersView);
+
+
+
+        t1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogTrigger2(t1);
+
+                return true;
+            }
+        });
+
+
+
+        t2.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogTrigger2(t2);
+                return true;
+            }
+        });
+
+
+        t3.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogTrigger2(t3);
+                return true;
+            }
+        });
+
+
+        t4.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogTrigger2(t4);
+                return true;
+            }
+        });
+
+
+
+        t5.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                dialogTrigger2(t5);
+                return true;
+            }
+        });
+
+
+
+        dialogBoxBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        dialogBoxBuilder.show();
+    }
+
+
+    private void dialogTrigger2(final Button triggerBtnSelected)
+    {
+        AlertDialog.Builder dialogBoxBuilder2 = new AlertDialog.Builder(this);
+        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+        View premadeView = layoutInflater.inflate(R.layout.edit_premade_text, null);
+        final EditText textForTriggerWords = (EditText)premadeView.findViewById(R.id.premadeEditTxt);
+        dialogBoxBuilder2.setView(premadeView);
+
+
+
+        dialogBoxBuilder2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                int triggerNumber = -1;
+                //Button testBtn;
+                if (triggerBtnSelected.getId() == t1.getId())
+                {
+                    t1.setText(textForTriggerWords.getText().toString());
+                    triggerNumber = 0;
+                }
+                else if (triggerBtnSelected.getId() == t2.getId())
+                {
+                    t2.setText(textForTriggerWords.getText().toString());
+                    triggerNumber = 1;
+                }
+                else if (triggerBtnSelected.getId() == t3.getId())
+                {
+                    t3.setText(textForTriggerWords.getText().toString());
+                    triggerNumber = 2;
+                }
+                else if (triggerBtnSelected.getId() == t4.getId())
+                {
+                    t4.setText(textForTriggerWords.getText().toString());
+                    triggerNumber = 3;
+                }
+                else if (triggerBtnSelected.getId() == t5.getId())
+                {
+                    t5.setText(textForTriggerWords.getText().toString());
+                    triggerNumber = 4;
+                }
+
+
+
+                if(textForTriggerWords.getText().toString() != "")
+                {
+                    triggerArray.set(triggerNumber, textForTriggerWords.getText().toString());
+                }
+
+
+               /* StringBuilder sb = new StringBuilder();
+                for(String allPremadesStr : triggerArray)
+                {
+                    sb.append(allPremadesStr);
+                    sb.append(",");
+                }
+
+                SharedPreferences saving = getSharedPreferences("Preferences", 0);
+                SharedPreferences.Editor editSave = saving.edit();
+                editSave.putString("premades", sb.toString());
+                editSave.commit();*/
+
+            }
+        });
+
+        dialogBoxBuilder2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+
+            }
+        });
+
+
+        dialogBoxBuilder2.show();
+    }
+
+
+    //ESTT
 
 }
