@@ -3,6 +3,9 @@ package com.fypvc.moh.fypwithvc;
 import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.media.Image;
 import android.os.Build;
 import android.os.VibrationEffect;
@@ -136,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
     private volatile double BC = 0;
 
     private ArrayList<ImageView> directionalIndicators = new ArrayList<ImageView>();
+    private ArrayList<String> indicatorColourTracker = new ArrayList<String>();
 
 
     @Override
@@ -263,24 +267,9 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
         btnStoptThread = (Button) findViewById(R.id.btnThread_Stop);
 
 
-        directionalIndicators.add( (ImageView) findViewById(R.id.right)  ); //adding direction indicators images to an array //0
-        directionalIndicators.add( (ImageView) findViewById(R.id.rightMiddleFrontRight)  );     //1
-        directionalIndicators.add( (ImageView) findViewById(R.id.frontRight) );                 //2
-        directionalIndicators.add( (ImageView) findViewById(R.id.frontMiddleFrontRight)  );     //3
-        directionalIndicators.add( (ImageView) findViewById(R.id.front)  );                     //4
-        directionalIndicators.add( (ImageView) findViewById(R.id.frontLeftMiddleFront)  );      //5
-        directionalIndicators.add( (ImageView) findViewById(R.id.frontLeft)  );                 //6
-        directionalIndicators.add( (ImageView) findViewById(R.id.leftMiddleFrontLeft)  );       //7
-        directionalIndicators.add( (ImageView) findViewById(R.id.left)  );                      //8
-        directionalIndicators.add( (ImageView) findViewById(R.id.leftMiddleBackLeft)  );        //9
-        directionalIndicators.add( (ImageView) findViewById(R.id.backLeft)  );                  //10
-        directionalIndicators.add( (ImageView) findViewById(R.id.backMiddleBackLeft)  );        //11
-        directionalIndicators.add( (ImageView) findViewById(R.id.back)  );                      //12
-        directionalIndicators.add( (ImageView) findViewById(R.id.backMiddleBackRight)  );       //13
-        directionalIndicators.add( (ImageView) findViewById(R.id.backRight)  );                 //14
-        directionalIndicators.add( (ImageView) findViewById(R.id.rightMiddleBackRight)  );      //15
-        directionalIndicators.add( (ImageView) findViewById(R.id.right)  );                     //16   --adding again yes
 
+        initialiseDirectionalIndicators();
+        initialisaColoursForDirections();
 
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -717,15 +706,15 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
     //etts
 
     private void setVibrationOnOff(String n){
-        if(n == "b")
-        {
+      /*  if(n == "b")
+        {*/
             try{
                 btSocket.getOutputStream().write(n.getBytes());
                 System.out.println(n);
 
             } catch (IOException e){ System.out.println("COULD NOT SEND ON INSTRUCTION");}
 
-        }
+      /*  }
         else if(n == "c")
         {
             try{
@@ -734,7 +723,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
             } catch (IOException e){System.out.println("COULD NOT SEND ON INSTRUCTION"); }
 
-        }
+        }*/
 
     }
 
@@ -1234,6 +1223,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (ABout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1256,6 +1246,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (ACout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1273,6 +1264,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (BAout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1297,6 +1289,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (CAout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1313,6 +1306,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (BCout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1332,6 +1326,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (CBout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1823,6 +1818,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (ABout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1845,6 +1841,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (ACout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1862,6 +1859,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (BAout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1886,6 +1884,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (CAout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1902,6 +1901,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (BCout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -1921,6 +1921,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                                 singleDirection = (int) (CBout / 22.5);
                                 directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_green_dark));
                                 Thread.sleep(1000);
                                 disableAllDirectionalEffects();
 
@@ -2135,16 +2136,44 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                         if(index == indicator1)
                         {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 1");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_green_dark));
                         }
                         else {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 2");
+                            }
+                            System.out.println(String.valueOf(index));
+
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_orange_dark));
                         }
                     }
 
                     ImageView direction = directionalIndicators.get(msxDirection);
+
+                    try {
+                        btSocket.getOutputStream().write(String.valueOf(msxDirection).getBytes());
+                    } catch (IOException e) {
+                        System.out.println("Motor comunication interrupted here: 3");
+                    }
+                    System.out.println(String.valueOf(msxDirection));
+
                     direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                    indicatorColourTracker.set(msxDirection, String.valueOf(android.R.color.holo_orange_dark));
 
                 }
                 else if (midToMin <= minToMax && midToMin <= maxToMid)  // mid to minroosterteeth
@@ -2155,11 +2184,29 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                         if(index == indicator1)
                         {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 4");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_green_dark));
                         }
                         else {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 5");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_orange_dark));
                         }
 
                         if(index == 16)
@@ -2170,7 +2217,16 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                     }
 
                     ImageView direction = directionalIndicators.get(minDirection);
+
+                    try {
+                        btSocket.getOutputStream().write(String.valueOf(minDirection).getBytes());
+                    } catch (IOException e) {
+                        System.out.println("Motor comunication interrupted here: 6");
+                    }
+                    System.out.println(String.valueOf(minDirection));
+
                     direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                    indicatorColourTracker.set(minDirection, String.valueOf(android.R.color.holo_orange_dark));
 
                 }
                 else if (maxToMid <= minToMax && maxToMid <= midToMin)  // max to mid
@@ -2180,11 +2236,28 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                         if(index == indicator1)
                         {
                             ImageView direction = directionalIndicators.get(index);
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 7");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_green_dark));
                         }
                         else {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 8");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_orange_dark));
                         }
 
                         if(index == 16)
@@ -2195,7 +2268,16 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                     }
 
                     ImageView direction = directionalIndicators.get(midDirection);
+
+                    try {
+                        btSocket.getOutputStream().write(String.valueOf(minDirection).getBytes());
+                    } catch (IOException e) {
+                        System.out.println("Motor comunication interrupted here: 9");
+                    }
+                    System.out.println(String.valueOf(minDirection));
+
                     direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                    indicatorColourTracker.set(minDirection, String.valueOf(android.R.color.holo_orange_dark));
                 }
 
             }
@@ -2212,11 +2294,29 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                         if(index == indicator1)
                         {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 10");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_green_dark));
                         }
                         else {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 11");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_orange_dark));
                         }
 
                         if(index == 0)
@@ -2227,7 +2327,16 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                     //now do the max direction
                     ImageView direction = directionalIndicators.get(midDirection);
+
+                    try {
+                        btSocket.getOutputStream().write(String.valueOf(midDirection).getBytes());
+                    } catch (IOException e) {
+                        System.out.println("Motor comunication interrupted here: 12");
+                    }
+                    System.out.println(String.valueOf(midDirection));
+
                     direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                    indicatorColourTracker.set(midDirection, String.valueOf(android.R.color.holo_orange_dark));
                 }
                 else if (midToMax <= minToMid && midToMax <= maxToMin)  // midToMax
                 {
@@ -2236,11 +2345,29 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                         if(index == indicator1)
                         {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 13");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_green_dark));
                         }
                         else {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 14");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_orange_dark));
                         }
 
                         if(index == 0)
@@ -2251,7 +2378,16 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                     //now do the max direction
                     ImageView direction = directionalIndicators.get(msxDirection);
+
+                    try {
+                        btSocket.getOutputStream().write(String.valueOf(msxDirection).getBytes());
+                    } catch (IOException e) {
+                        System.out.println("Motor comunication interrupted here: 15");
+                    }
+                    System.out.println(String.valueOf(msxDirection));
+
                     direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                    indicatorColourTracker.set(msxDirection, String.valueOf(android.R.color.holo_orange_dark));
 
                 }
                 else if (maxToMin <= midToMax && maxToMin <= minToMid)  //maxToMin
@@ -2261,17 +2397,46 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                         if(index == indicator1)
                         {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 16");
+                            }
+                            System.out.println(String.valueOf(index));
+
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_green_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_green_dark));
                         }
                         else {
                             ImageView direction = directionalIndicators.get(index);
+
+                            try {
+                                btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                            } catch (IOException e) {
+                                System.out.println("Motor comunication interrupted here: 17");
+                            }
+                            System.out.println(String.valueOf(index));
+
                             direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                            indicatorColourTracker.set(index, String.valueOf(android.R.color.holo_orange_dark));
                         }
 
                     }
 
                     ImageView direction = directionalIndicators.get(minDirection);
+
+                    try {
+                        btSocket.getOutputStream().write(String.valueOf(minDirection).getBytes());
+                    } catch (IOException e) {
+                        System.out.println("Motor comunication interrupted here: 18");
+                    }
+                    System.out.println(String.valueOf(minDirection));
+
                     direction.setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                    indicatorColourTracker.set(minDirection, String.valueOf(android.R.color.holo_orange_dark));
+
 
                 }
             }
@@ -2337,7 +2502,36 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
         for (int index = 0; index <= 15; index++)
         {
             ImageView direction = directionalIndicators.get(index);
+            ColorFilter directionColor = direction.getColorFilter();
+
+            if(indicatorColourTracker.get(index).equals(String.valueOf(android.R.color.holo_green_dark)) || indicatorColourTracker.get(index).equals(String.valueOf(android.R.color.holo_orange_dark)) )
+            {
+                try {
+                    btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Turning off motor " + index);
+
+            }
+
+
+
+            /*if(direction.getColorFilter().hashCode() != android.R.color.holo_red_dark) //deactive motors that are currently activated
+            {
+
+                try {
+                    btSocket.getOutputStream().write(String.valueOf(index).getBytes());
+                    System.out.println("Turning off motor " + String.valueOf(index));
+                } catch (IOException e) {
+                    System.out.println("Could not turn off motor");
+                }
+
+
+            }*/
+
             direction.setColorFilter(getResources().getColor(android.R.color.holo_red_dark));
+
 
         }
 
@@ -2897,5 +3091,56 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
 
     //ESTT
+
+
+
+
+
+
+
+    void initialisaColoursForDirections()
+    {
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+        indicatorColourTracker.add(String.valueOf(android.R.color.holo_red_dark));
+    }
+
+
+    void initialiseDirectionalIndicators()
+    {
+        directionalIndicators.add((ImageView) findViewById(R.id.right)  ); //adding direction indicators images to an array //0
+        directionalIndicators.add((ImageView) findViewById(R.id.rightMiddleFrontRight)  );     //1
+        directionalIndicators.add((ImageView) findViewById(R.id.frontRight) );                 //2
+        directionalIndicators.add((ImageView) findViewById(R.id.frontMiddleFrontRight)  );     //3
+        directionalIndicators.add((ImageView) findViewById(R.id.front)  );                     //4
+        directionalIndicators.add((ImageView) findViewById(R.id.frontLeftMiddleFront)  );      //5
+        directionalIndicators.add((ImageView) findViewById(R.id.frontLeft)  );                 //6
+        directionalIndicators.add((ImageView) findViewById(R.id.leftMiddleFrontLeft)  );       //7
+        directionalIndicators.add((ImageView) findViewById(R.id.left)  );                      //8
+        directionalIndicators.add((ImageView) findViewById(R.id.leftMiddleBackLeft)  );        //9
+        directionalIndicators.add((ImageView) findViewById(R.id.backLeft)  );                  //10
+        directionalIndicators.add((ImageView) findViewById(R.id.backMiddleBackLeft)  );        //11
+        directionalIndicators.add((ImageView) findViewById(R.id.back)  );                      //12
+        directionalIndicators.add((ImageView) findViewById(R.id.backMiddleBackRight)  );       //13
+        directionalIndicators.add((ImageView) findViewById(R.id.backRight)  );                 //14
+        directionalIndicators.add((ImageView) findViewById(R.id.rightMiddleBackRight)  );      //15
+        directionalIndicators.add((ImageView) findViewById(R.id.right)  );                     //16   --adding again yes
+    }
+
 
 }
