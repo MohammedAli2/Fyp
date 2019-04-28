@@ -145,6 +145,11 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
     private int greenDirectionIndex = -1;
 
 
+    //Larger Enviroment
+    private volatile boolean largerEnviroment = false;
+    Switch largerEnvSwitch;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -211,6 +216,20 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
 
         //ETTS
+
+
+        //larger enviroment boost
+        largerEnvSwitch = findViewById(R.id.rangeBoostSwitch);
+
+        largerEnvSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    largerEnviroment = true;
+                } else {
+                    largerEnviroment = false;
+                }
+            }
+        });
 
 
 
@@ -1716,431 +1735,2320 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                         double CBout = 0;
 
-
-                        switch (timeOrder)
+                        if(largerEnviroment) //adust values if larger enviroment selected
                         {
-                            case "ABC":
-                                if(AB > 60)
-                                {
-                                    ABout = 210;
-                                }
-                                else {
-                                    ABout = (AB * 2) + 90;
-                                }
-                                //BCin = ((((BC - 30) * 2)  + 30) + 90); changing
-                                BCin = 210 - (BC * 2);
-                                ACin = ((AC * 2) + 90);
-
-                                System.out.println("AB out " + ABout);
-                                System.out.println("BCin " + BCin);
-                                System.out.println("ACin " + ACin);
-
-                                makeDirectionAllEffects(ABout, BCin, ACin, timeOrder);
-                                Thread.sleep(1000);
-                                disableAllDirectionalEffects();
-
-                                break;
-                            case "ACB":
-                                //adding boundary
-                                if(AC > 60)
-                                {
-                                    ACout = 330;
-                                }
-                                else if(AC > 46 && AC < 61)
-                                {
-                                    ACout = (90 - (AB * 2)) + 360 ;
-                                }
-                                else
-                                {
-                                    ACout = (90 - (AB * 2)) ;
-                                }
-
-
-                                CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
-                                CBin = (((CB - 30) * 2)  + 30);
-
-                                if(CBin < 0)
-                                {
-                                    CBin = CBin + 360;
-
-                                }
-
-                                ABin = (90 - (AB * 2));
-
-                                if(ABin < 0)
-                                {
-                                    ABin = ABin + 360;
-                                }
-
-                                System.out.println("ACout " + ACout);
-                                System.out.println("CBin " + CBin);
-                                System.out.println("ABin " + ABin);
-
-
-                                makeDirectionAllEffects(ACout, CBin, ABin, timeOrder);
-                                Thread.sleep(1000);
-                                disableAllDirectionalEffects();
-
-
-                                break;
-                            case "BAC":
-
-                                BA = Math.abs(AB);
-                                if(BA > 60)
-                                {
-                                    BAout = 90;
-                                }
-                                else {
-                                    BAout = ((180 - (120 + BA)) * 2) + 90;
-                                }
-
-                                ACin = ((AC * 2) + 90);
-
-                                //BCin = ((((BC - 30) * 2)  + 30) + 90);  //changing
-                                BCin = 210 - (BC * 2);
-
-                                System.out.println("BAout " + BAout);
-                                System.out.println("BCin " + BCin);
-                                System.out.println("ACin " + ACin);
-
-                                makeDirectionAllEffects(BAout, BCin, ACin, timeOrder);
-                                Thread.sleep(1000);
-                                disableAllDirectionalEffects();
-
-
-                                break;
-                            case "BCA":
-                                if(BC > 60)
-                                {
-                                    BCout = 330;
-                                }
-                                else {
-                                    BCout = (BC * 2) + 210;
-                                }
-
-                                BA = Math.abs(AB);
-
-                                BAin = ((BA * 2) + 210);
-
-                                if(BAin > 360)
-                                {
-                                    BAin = BAin - 360;
-                                }
+                            switch (timeOrder) {
+                                case "ABC":
+
+
+                                    if (AB >= 67)
+                                    {
+                                        if ((AB - 67) < (90.5 - AB))
+                                        {
+                                            ABout = 135;
+                                        }
+                                        else
+                                        {
+                                            ABout = 157.5;
+                                        }
+
+                                    }
+                                    else if (AB >= 44.7)
+                                    {
+                                        if ((AB - 44.7) < (67 - AB))
+                                        {
+                                            ABout = 112.5;
+                                        }
+                                        else
+                                        {
+                                            ABout = 135;
+                                        }
+                                    }
+                                    else if (AB >= 23.5)
+                                    {
+                                        if ((AB - 23.5) < (44.7 - AB))
+                                        {
+                                            ABout = 90;
+                                        }
+                                        else
+                                        {
+                                            ABout = 112.5;
+                                        }
+                                    }
+                                    else if (AB >= 3.1)
+                                    {
+                                        if ((AB - 3.1) < (23.5 - AB))
+                                        {
+                                            ABout = 67.5;
+                                        }
+                                        else
+                                        {
+                                            ABout = 90;
+                                        }
+                                    }
+                                    else if (AB <= 3.1)
+                                    {
+                                        ABout = 67.5;
+                                    }
+                                    else
+                                    {
+                                        ABout = 157.5;
+                                    }
+
+                                    //BCin = ((((BC - 30) * 2)  + 30) + 90); changing
+
+                                    if (BC >= 63.1)
+                                    {
+                                        if ((BC - 63.1) < (83.5 - BC))
+                                        {
+                                            BCin = 112.5;
+                                        }
+                                        else
+                                        {
+                                            BCin = 90;
+                                        }
+
+                                    }
+                                    else if (BC >= 43.2)
+                                    {
+                                        if ((BC - 43.2) < (63.1 - BC))
+                                        {
+                                            BCin = 135;
+                                        }
+                                        else
+                                        {
+                                            BCin = 112.5;
+                                        }
+                                    }
+                                    else if (BC >= 23.4)
+                                    {
+                                        if ((BC - 23.4) < (43.2 - BC))
+                                        {
+                                            BCin = 157.5;
+                                        }
+                                        else
+                                        {
+                                            BCin = 135;
+                                        }
+                                    }
+                                    else if (BC >= 3.6)
+                                    {
+                                        if ((BC - 3.6) < (23.4 - BC))
+                                        {
+                                            BCin = 180;
+                                        }
+                                        else
+                                        {
+                                            BCin = 157.5;
+                                        }
+                                    }
+                                    else if (BC <= 3.6)
+                                    {
+                                        BCin = 180;
+                                    }
+                                    else
+                                    {
+                                        BCin = 90;
+                                    }
+
+
+
+
+                                    if (AC >= 76.6)
+                                    {
+                                        if ((AC - 76.6) < (97.5 - AC))
+                                        {
+                                            ACin = 202.5;
+                                        }
+                                        else
+                                        {
+                                            ACin = 225;
+                                        }
+
+                                    }
+                                    else if (AC >= 56.4)
+                                    {
+                                        if ((AC - 56.4) < (76.6 - AC))
+                                        {
+                                            ACin = 180;
+                                        }
+                                        else
+                                        {
+                                            ACin = 202.5;
+                                        }
+                                    }
+                                    else if (AC >= 36.6)
+                                    {
+                                        if ((AC - 36.6) < (56.4 - AC))
+                                        {
+                                            ACin = 157.5;
+                                        }
+                                        else
+                                        {
+                                            ACin = 180;
+                                        }
+                                    }
+                                    else if (AC >= 16.8)
+                                    {
+                                        if ((AC - 16.8) < (36.6 - AC))
+                                        {
+                                            ACin = 135;
+                                        }
+                                        else
+                                        {
+                                            ACin = 157.5;
+                                        }
+                                    }
+                                    else if (AC >= 5.5)
+                                    {
+                                        if ((AC - 5.5) < (16.8 - AC))
+                                        {
+                                            ACin = 112.5;
+                                        }
+                                        else
+                                        {
+                                            ACin = 135;
+                                        }
+                                    }
+                                    else if (AC <= 5.5)
+                                    {
+                                        ACin = 112.5;
+                                    }
+                                    else
+                                    {
+                                        ACin = 225;
+                                    }
+
+                                    System.out.println("AB out " + ABout);
+                                    System.out.println("BCin " + BCin);
+                                    System.out.println("ACin " + ACin);
+
+                                    makeDirectionAllEffects(ABout, BCin, ACin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "ACB":
+
+                                    if (AC >= 67)
+                                    {
+                                        if ((AC - 67) < (90.5 - AC))
+                                        {
+                                            ACout = 45;
+                                        }
+                                        else
+                                        {
+                                            ACout = 22.5;
+                                        }
+
+                                    }
+                                    else if (AC >= 44.7)
+                                    {
+                                        if ((AC - 44.7) < (67 - AC))
+                                        {
+                                            ACout = 67.5;
+                                        }
+                                        else
+                                        {
+                                            ACout = 45;
+                                        }
+                                    }
+                                    else if (AC >= 23.5)
+                                    {
+                                        if ((AC - 23.5) < (44.7 - AC))
+                                        {
+                                            ACout = 90;
+                                        }
+                                        else
+                                        {
+                                            ACout = 67.5;
+                                        }
+                                    }
+                                    else if (AC >= 3.1)
+                                    {
+                                        if ((AC - 3.1) < (23.5 - AC))
+                                        {
+                                            ACout = 112.5;
+                                        }
+                                        else
+                                        {
+                                            ACout = 90;
+                                        }
+                                    }
+                                    else if (AC <= 3.1)
+                                    {
+                                        ACout = 112.5;
+                                    }
+                                    else
+                                    {
+                                        ACout = 22.5;
+                                    }
+
+
+                                    CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
+                                    if (CB >= 63.1)
+                                    {
+                                        if ((CB - 63.1) < (83.5 - CB))
+                                        {
+                                            CBin = 67.5;
+                                        }
+                                        else
+                                        {
+                                            CBin = 90;
+                                        }
+
+                                    }
+                                    else if (CB >= 43.2)
+                                    {
+                                        if ((CB - 43.2) < (63.1 - CB))
+                                        {
+                                            CBin = 45;
+                                        }
+                                        else
+                                        {
+                                            CBin = 67.5;
+                                        }
+                                    }
+                                    else if (CB >= 23.4)
+                                    {
+                                        if ((CB - 23.4) < (43.2 - CB))
+                                        {
+                                            CBin = 22.5;
+                                        }
+                                        else
+                                        {
+                                            CBin = 45;
+                                        }
+                                    }
+                                    else if (CB >= 3.6)
+                                    {
+                                        if ((CB - 3.6) < (23.4 - CB))
+                                        {
+                                            CBin = 0;
+                                        }
+                                        else
+                                        {
+                                            CBin = 22.5;
+                                        }
+                                    }
+                                    else if (CB <= 3.6)
+                                    {
+                                        CBin = 0;
+                                    }
+                                    else
+                                    {
+                                        CBin = 90;
+                                    }
+
+
+                                    if (AB >= 76.6)
+                                    {
+                                        if ((AB - 76.6) < (97.5 - AB))
+                                        {
+                                            ABin = 337.5;
+                                        }
+                                        else
+                                        {
+                                            ABin = 315;
+                                        }
+
+                                    }
+                                    else if (AB >= 56.4)
+                                    {
+                                        if ((AB - 56.4) < (76.6 - AB))
+                                        {
+                                            ABin = 0;
+                                        }
+                                        else
+                                        {
+                                            ABin = 337.5;
+                                        }
+                                    }
+                                    else if (AB >= 36.6)
+                                    {
+                                        if ((AB - 36.6) < (56.4 - AB))
+                                        {
+                                            ABin = 22.5;
+                                        }
+                                        else
+                                        {
+                                            ABin = 0;
+                                        }
+                                    }
+                                    else if (AB >= 16.8)
+                                    {
+                                        if ((AB - 16.8) < (36.6 - AB))
+                                        {
+                                            ABin = 45;
+                                        }
+                                        else
+                                        {
+                                            ABin = 22.5;
+                                        }
+                                    }
+                                    else if (AB >= 5.5)
+                                    {
+                                        if ((AB - 5.5) < (16.8 - AB))
+                                        {
+                                            ABin = 67.5;
+                                        }
+                                        else
+                                        {
+                                            ABin = 45;
+                                        }
+                                    }
+                                    else if (AB <= 5.5)
+                                    {
+                                        ABin = 67.5;
+                                    }
+                                    else
+                                    {
+                                        ABin = 315;
+                                    }
+
+                                    System.out.println("ACout " + ACout);
+                                    System.out.println("CBin " + CBin);
+                                    System.out.println("ABin " + ABin);
+
+
+                                    makeDirectionAllEffects(ACout, CBin, ABin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                case "BAC":
+
+                                    BA = Math.abs(AB);
+
+                                    if (BA >= 74.7)
+                                    {
+                                        if ((BA - 74.7) < (98.7 - BA))
+                                        {
+                                            BAout = 157.5;
+                                        }
+                                        else
+                                        {
+                                            BAout = 135;
+                                        }
+
+                                    }
+                                    else if (BA >= 52)
+                                    {
+                                        if ((BA - 52) < (74.7 - BA))
+                                        {
+                                            BAout = 180;
+                                        }
+                                        else
+                                        {
+                                            BAout = 157.5;
+                                        }
+                                    }
+                                    else if (BA >= 30.5)
+                                    {
+                                        if ((BA - 30.5) < (52 - BA))
+                                        {
+                                            BAout = 202.5;
+                                        }
+                                        else
+                                        {
+                                            BAout = 180;
+                                        }
+                                    }
+                                    else if (BA >= 9.8)
+                                    {
+                                        if ((BA - 9.8) < (30.5 - BA))
+                                        {
+                                            BAout = 225;
+                                        }
+                                        else
+                                        {
+                                            BAout = 202.5;
+                                        }
+                                    }
+                                    else if (BA <= 9.8)
+                                    {
+                                        BAout = 225;
+                                    }
+                                    else
+                                    {
+                                        BAout = 135;
+                                    }
+
+
+
+
+                                    if (AC >= 76.6)
+                                    {
+                                        if ((AC - 76.6) < (97.5 - AC))
+                                        {
+                                            ACin = 202.5;
+                                        }
+                                        else
+                                        {
+                                            ACin = 225;
+                                        }
+
+                                    }
+                                    else if (AC >= 56.4)
+                                    {
+                                        if ((AC - 56.4) < (76.6 - AC))
+                                        {
+                                            ACin = 180;
+                                        }
+                                        else
+                                        {
+                                            ACin = 202.5;
+                                        }
+                                    }
+                                    else if (AC >= 36.6)
+                                    {
+                                        if ((AC - 36.6) < (56.4 - AC))
+                                        {
+                                            ACin = 157.5;
+                                        }
+                                        else
+                                        {
+                                            ACin = 180;
+                                        }
+                                    }
+                                    else if (AC >= 16.8)
+                                    {
+                                        if ((AC - 16.8) < (36.6 - AC))
+                                        {
+                                            ACin = 135;
+                                        }
+                                        else
+                                        {
+                                            ACin = 157.5;
+                                        }
+                                    }
+                                    else if (AC >= 5.5)
+                                    {
+                                        if ((AC - 5.5) < (16.8 - AC))
+                                        {
+                                            ACin = 112.5;
+                                        }
+                                        else
+                                        {
+                                            ACin = 135;
+                                        }
+                                    }
+                                    else if (AC <= 5.5)
+                                    {
+                                        ACin = 112.5;
+                                    }
+                                    else
+                                    {
+                                        ACin = 225;
+                                    }
+
+                                    //BCin = ((((BC - 30) * 2)  + 30) + 90);  //changing
+
+                                    if (BC >= 63.1)
+                                    {
+                                        if ((BC - 63.1) < (83.5 - BC))
+                                        {
+                                            BCin = 112.5;
+                                        }
+                                        else
+                                        {
+                                            BCin = 90;
+                                        }
+
+                                    }
+                                    else if (BC >= 43.2)
+                                    {
+                                        if ((BC - 43.2) < (63.1 - BC))
+                                        {
+                                            BCin = 135;
+                                        }
+                                        else
+                                        {
+                                            BCin = 112.5;
+                                        }
+                                    }
+                                    else if (BC >= 23.4)
+                                    {
+                                        if ((BC - 23.4) < (43.2 - BC))
+                                        {
+                                            BCin = 157.5;
+                                        }
+                                        else
+                                        {
+                                            BCin = 135;
+                                        }
+                                    }
+                                    else if (BC >= 3.6)
+                                    {
+                                        if ((BC - 3.6) < (23.4 - BC))
+                                        {
+                                            BCin = 180;
+                                        }
+                                        else
+                                        {
+                                            BCin = 157.5;
+                                        }
+                                    }
+                                    else if (BC <= 3.6)
+                                    {
+                                        BCin = 180;
+                                    }
+                                    else
+                                    {
+                                        BCin = 90;
+                                    }
+
+
+                                    System.out.println("BAout " + BAout);
+                                    System.out.println("BCin " + BCin);
+                                    System.out.println("ACin " + ACin);
+
+                                    makeDirectionAllEffects(BAout, BCin, ACin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                case "BCA":
+
+                                    if (BC >= 59.4)
+                                    {
+                                        if ((BC - 59.4) < (82.5 - BC))
+                                        {
+                                            BCout = 247.5;
+                                        }
+                                        else
+                                        {
+                                            BCout = 270;
+                                        }
+
+                                    }
+                                    else if (BC >= 37.5)
+                                    {
+                                        if ((BC - 37.5) < (59.4 - BC))
+                                        {
+                                            BCout = 225;
+                                        }
+                                        else
+                                        {
+                                            BCout = 247.5;
+                                        }
+                                    }
+                                    else if (BC >= 16.6)
+                                    {
+                                        if ((BC - 16.6) < (37.5 - BC))
+                                        {
+                                            BCout = 202.5;
+                                        }
+                                        else
+                                        {
+                                            BCout = 225;
+                                        }
+                                    }
+                                    else if (BC >= 9)
+                                    {
+                                        if ((BC - 9) < (16.6 - BC))
+                                        {
+                                            BCout = 180;
+                                        }
+                                        else
+                                        {
+                                            BCout = 202.5;
+                                        }
+                                    }
+                                    else if (BC <= 9)
+                                    {
+                                        BCout = 180;
+                                    }
+                                    else
+                                    {
+                                        BCout = 270;
+                                    }
+
+
+                                    BA = Math.abs(AB);
+
+                                    if (BA >= 69.8)
+                                    {
+                                        if ((BA - 69.8) < (90.5 - BA))
+                                        {
+                                            BAin = 315;
+                                        }
+                                        else
+                                        {
+                                            BAin = 337.5;
+                                        }
+
+                                    }
+                                    else if (BA >= 49.8)
+                                    {
+                                        if ((BA - 49.8) < (69.8 - BA))
+                                        {
+                                            BAin = 292.5;
+                                        }
+                                        else
+                                        {
+                                            BAin = 315;
+                                        }
+                                    }
+                                    else if (BA >= 30)
+                                    {
+                                        if ((BA - 30) < (49.8 - BA))
+                                        {
+                                            BAin = 270;
+                                        }
+                                        else
+                                        {
+                                            BAin = 292.5;
+                                        }
+                                    }
+                                    else if (BA >= 10.2)
+                                    {
+                                        if ((BA - 10.2) < (30 - BA))
+                                        {
+                                            BAin = 247.5;
+                                        }
+                                        else
+                                        {
+                                            BAin = 270;
+                                        }
+                                    }
+                                    else if (BA <= 10.2)
+                                    {
+                                        BAin = 247.5;
+                                    }
+                                    else
+                                    {
+                                        BAin = 337.5;
+                                    }
+
+
+                                    CA = Math.abs(AC);
+                                    if (CA >= 69.8)
+                                    {
+                                        if ((CA - 69.8) < (90.5 - CA))
+                                        {
+                                            CAin = 235;
+                                        }
+                                        else
+                                        {
+                                            CAin = 202.5;
+                                        }
+
+                                    }
+                                    else if (CA >= 49.8)
+                                    {
+                                        if ((CA - 49.8) < (69.8 - CA))
+                                        {
+                                            CAin = 247.5;
+                                        }
+                                        else
+                                        {
+                                            CAin = 235;
+                                        }
+                                    }
+                                    else if (CA >= 30)
+                                    {
+                                        if ((CA - 30) < (49.8 - CA))
+                                        {
+                                            CAin = 270;
+                                        }
+                                        else
+                                        {
+                                            CAin = 247.5;
+                                        }
+                                    }
+                                    else if (CA >= 10.2)
+                                    {
+                                        if ((CA - 10.2) < (30 - CA))
+                                        {
+                                            CAin = 292.5;
+                                        }
+                                        else
+                                        {
+                                            CAin = 270;
+                                        }
+                                    }
+                                    else if (CA <= 10.2)
+                                    {
+                                        CAin = 292.5;
+                                    }
+                                    else
+                                    {
+                                        CAin = 202.5;
+                                    }
+
+                                    System.out.println("BCout " + BCout);
+                                    System.out.println("BAin " + BAin);
+                                    System.out.println("CAin " + CAin);
+
+                                    makeDirectionAllEffects(BCout, BAin, CAin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "CAB":
+                                    CA = Math.abs(AC);
+
+                                    if (CA >= 74.7)
+                                    {
+                                        if ((CA - 74.7) < (98.7 - CA))
+                                        {
+                                            CAout = 22.5;
+                                        }
+                                        else
+                                        {
+                                            CAout = 45;
+                                        }
+
+                                    }
+                                    else if (CA >= 52)
+                                    {
+                                        if ((CA - 52) < (74.7 - CA))
+                                        {
+                                            CAout = 0; //360 would also suffice
+                                        }
+                                        else
+                                        {
+                                            CAout = 22.5;
+                                        }
+                                    }
+                                    else if (CA >= 30.5)
+                                    {
+                                        if ((CA - 30.5) < (52 - CA))
+                                        {
+                                            CAout = 337.5;
+                                        }
+                                        else
+                                        {
+                                            CAout = 0;
+                                        }
+                                    }
+                                    else if (CA >= 9.8)
+                                    {
+                                        if ((CA - 9.8) < (30.5 - CA))
+                                        {
+                                            CAout = 315;
+                                        }
+                                        else
+                                        {
+                                            CAout = 337.5;
+                                        }
+                                    }
+                                    else if (CA <= 9.8)
+                                    {
+                                        CAout = 315;
+                                    }
+                                    else
+                                    {
+                                        CAout = 45;
+                                    }
+
+
+                                    CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
+                                    if (CB >= 63.1)
+                                    {
+                                        if ((CB - 63.1) < (83.5 - CB))
+                                        {
+                                            CBin = 67.5;
+                                        }
+                                        else
+                                        {
+                                            CBin = 90;
+                                        }
+
+                                    }
+                                    else if (CB >= 43.2)
+                                    {
+                                        if ((CB - 43.2) < (63.1 - CB))
+                                        {
+                                            CBin = 45;
+                                        }
+                                        else
+                                        {
+                                            CBin = 67.5;
+                                        }
+                                    }
+                                    else if (CB >= 23.4)
+                                    {
+                                        if ((CB - 23.4) < (43.2 - CB))
+                                        {
+                                            CBin = 22.5;
+                                        }
+                                        else
+                                        {
+                                            CBin = 45;
+                                        }
+                                    }
+                                    else if (CB >= 3.6)
+                                    {
+                                        if ((CB - 3.6) < (23.4 - CB))
+                                        {
+                                            CBin = 0;
+                                        }
+                                        else
+                                        {
+                                            CBin = 22.5;
+                                        }
+                                    }
+                                    else if (CB <= 3.6)
+                                    {
+                                        CBin = 0;
+                                    }
+                                    else
+                                    {
+                                        CBin = 90;
+                                    }
+
+                                    if (AB >= 76.6)
+                                    {
+                                        if ((AB - 76.6) < (97.5 - AB))
+                                        {
+                                            ABin = 337.5;
+                                        }
+                                        else
+                                        {
+                                            ABin = 315;
+                                        }
+
+                                    }
+                                    else if (AB >= 56.4)
+                                    {
+                                        if ((AB - 56.4) < (76.6 - AB))
+                                        {
+                                            ABin = 0;
+                                        }
+                                        else
+                                        {
+                                            ABin = 337.5;
+                                        }
+                                    }
+                                    else if (AB >= 36.6)
+                                    {
+                                        if ((AB - 36.6) < (56.4 - AB))
+                                        {
+                                            ABin = 22.5;
+                                        }
+                                        else
+                                        {
+                                            ABin = 0;
+                                        }
+                                    }
+                                    else if (AB >= 16.8)
+                                    {
+                                        if ((AB - 16.8) < (36.6 - AB))
+                                        {
+                                            ABin = 45;
+                                        }
+                                        else
+                                        {
+                                            ABin = 22.5;
+                                        }
+                                    }
+                                    else if (AB >= 5.5)
+                                    {
+                                        if ((AB - 5.5) < (16.8 - AB))
+                                        {
+                                            ABin = 67.5;
+                                        }
+                                        else
+                                        {
+                                            ABin = 45;
+                                        }
+                                    }
+                                    else if (AB <= 5.5)
+                                    {
+                                        ABin = 67.5;
+                                    }
+                                    else
+                                    {
+                                        ABin = 315;
+                                    }
+                                    System.out.println("CAout " + CAout);
+                                    System.out.println("CBin " + CBin);
+                                    System.out.println("ABin " + ABin);
+
+                                    makeDirectionAllEffects(CAout, CBin, ABin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "CBA":
+
+                                    CA = Math.abs(AC);
+                                    if (CA >= 69.8)
+                                    {
+                                        if ((CA - 69.8) < (90.5 - CA))
+                                        {
+                                            CAin = 235;
+                                        }
+                                        else
+                                        {
+                                            CAin = 202.5;
+                                        }
+
+                                    }
+                                    else if (CA >= 49.8)
+                                    {
+                                        if ((CA - 49.8) < (69.8 - CA))
+                                        {
+                                            CAin = 247.5;
+                                        }
+                                        else
+                                        {
+                                            CAin = 235;
+                                        }
+                                    }
+                                    else if (CA >= 30)
+                                    {
+                                        if ((CA - 30) < (49.8 - CA))
+                                        {
+                                            CAin = 270;
+                                        }
+                                        else
+                                        {
+                                            CAin = 247.5;
+                                        }
+                                    }
+                                    else if (CA >= 10.2)
+                                    {
+                                        if ((CA - 10.2) < (30 - CA))
+                                        {
+                                            CAin = 292.5;
+                                        }
+                                        else
+                                        {
+                                            CAin = 270;
+                                        }
+                                    }
+                                    else if (CA <= 10.2)
+                                    {
+                                        CAin = 292.5;
+                                    }
+                                    else
+                                    {
+                                        CAin = 202.5;
+                                    }
+
+                                    BA = Math.abs(AB);
+                                    if (BA >= 69.8)
+                                    {
+                                        if ((BA - 69.8) < (90.5 - BA))
+                                        {
+                                            BAin = 315;
+                                        }
+                                        else
+                                        {
+                                            BAin = 337.5;
+                                        }
+
+                                    }
+                                    else if (BA >= 49.8)
+                                    {
+                                        if ((BA - 49.8) < (69.8 - BA))
+                                        {
+                                            BAin = 292.5;
+                                        }
+                                        else
+                                        {
+                                            BAin = 315;
+                                        }
+                                    }
+                                    else if (BA >= 30)
+                                    {
+                                        if ((BA - 30) < (49.8 - BA))
+                                        {
+                                            BAin = 270;
+                                        }
+                                        else
+                                        {
+                                            BAin = 292.5;
+                                        }
+                                    }
+                                    else if (BA >= 10.2)
+                                    {
+                                        if ((BA - 10.2) < (30 - BA))
+                                        {
+                                            BAin = 247.5;
+                                        }
+                                        else
+                                        {
+                                            BAin = 270;
+                                        }
+                                    }
+                                    else if (BA <= 10.2)
+                                    {
+                                        BAin = 247.5;
+                                    }
+                                    else
+                                    {
+                                        BAin = 337.5;
+                                    }
+
+                                    CB = Math.abs(BC);
+
+                                    if (CB >= 59.4)
+                                    {
+                                        if ((CB - 59.4) < (82.5 - CB))
+                                        {
+                                            CBout = 292.5;
+                                        }
+                                        else
+                                        {
+                                            CBout = 270;
+                                        }
+
+                                    }
+                                    else if (CB >= 37.5)
+                                    {
+                                        if ((CB - 37.5) < (59.4 - CB))
+                                        {
+                                            CBout = 315;
+                                        }
+                                        else
+                                        {
+                                            CBout = 292.5;
+                                        }
+                                    }
+                                    else if (CB >= 16.6)
+                                    {
+                                        if ((CB - 16.6) < (37.5 - CB))
+                                        {
+                                            CBout = 337.5;
+                                        }
+                                        else
+                                        {
+                                            CBout = 315;
+                                        }
+                                    }
+                                    else if (CB >= 9)
+                                    {
+                                        if ((CB - 9) < (16.6 - CB))
+                                        {
+                                            CBout = 0;
+                                        }
+                                        else
+                                        {
+                                            CBout = 337.5;
+                                        }
+                                    }
+                                    else if (CB <= 9)
+                                    {
+                                        CBout = 0;
+                                    }
+                                    else
+                                    {
+                                        CBout = 270;
+                                    }
+
+
+                                    System.out.println("CAin " + CAin);
+                                    System.out.println("BAin " + BAin);
+                                    System.out.println("CBout " + CBout);
+
+                                    makeDirectionAllEffects(CAin, BAin, CBout, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "AB":
+
+                                    if (AB >= 67)
+                                    {
+                                        if ((AB - 67) < (90.5 - AB))
+                                        {
+                                            ABout = 135;
+                                        }
+                                        else
+                                        {
+                                            ABout = 157.5;
+                                        }
+
+                                    }
+                                    else if (AB >= 44.7)
+                                    {
+                                        if ((AB - 44.7) < (67 - AB))
+                                        {
+                                            ABout = 112.5;
+                                        }
+                                        else
+                                        {
+                                            ABout = 135;
+                                        }
+                                    }
+                                    else if (AB >= 23.5)
+                                    {
+                                        if ((AB - 23.5) < (44.7 - AB))
+                                        {
+                                            ABout = 90;
+                                        }
+                                        else
+                                        {
+                                            ABout = 112.5;
+                                        }
+                                    }
+                                    else if (AB >= 3.1)
+                                    {
+                                        if ((AB - 3.1) < (23.5 - AB))
+                                        {
+                                            ABout = 67.5;
+                                        }
+                                        else
+                                        {
+                                            ABout = 90;
+                                        }
+                                    }
+                                    else if (AB <= 3.1)
+                                    {
+                                        ABout = 67.5;
+                                    }
+                                    else
+                                    {
+                                        ABout = 157.5;
+                                    }
+
+                                    System.out.println("ABout " + ABout);
+
+
+                                    if (AB >= 76.6)
+                                    {
+                                        if ((AB - 76.6) < (97.5 - AB))
+                                        {
+                                            ABin = 337.5;
+                                        }
+                                        else
+                                        {
+                                            ABin = 315;
+                                        }
+
+                                    }
+                                    else if (AB >= 56.4)
+                                    {
+                                        if ((AB - 56.4) < (76.6 - AB))
+                                        {
+                                            ABin = 0;
+                                        }
+                                        else
+                                        {
+                                            ABin = 337.5;
+                                        }
+                                    }
+                                    else if (AB >= 36.6)
+                                    {
+                                        if ((AB - 36.6) < (56.4 - AB))
+                                        {
+                                            ABin = 22.5;
+                                        }
+                                        else
+                                        {
+                                            ABin = 0;
+                                        }
+                                    }
+                                    else if (AB >= 16.8)
+                                    {
+                                        if ((AB - 16.8) < (36.6 - AB))
+                                        {
+                                            ABin = 45;
+                                        }
+                                        else
+                                        {
+                                            ABin = 22.5;
+                                        }
+                                    }
+                                    else if (AB >= 5.5)
+                                    {
+                                        if ((AB - 5.5) < (16.8 - AB))
+                                        {
+                                            ABin = 67.5;
+                                        }
+                                        else
+                                        {
+                                            ABin = 45;
+                                        }
+                                    }
+                                    else if (AB <= 5.5)
+                                    {
+                                        ABin = 67.5;
+                                    }
+                                    else
+                                    {
+                                        ABin = 315;
+                                    }
+                                    System.out.println("ABin " + ABin);
+
+                                    singleDirection = (int) (ABout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    singleDirection = (int) (ABin / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                case "AC":
+
+                                    if (AC >= 67)
+                                    {
+                                        if ((AC - 67) < (90.5 - AC))
+                                        {
+                                            ACout = 45;
+                                        }
+                                        else
+                                        {
+                                            ACout = 22.5;
+                                        }
+
+                                    }
+                                    else if (AC >= 44.7)
+                                    {
+                                        if ((AC - 44.7) < (67 - AC))
+                                        {
+                                            ACout = 67.5;
+                                        }
+                                        else
+                                        {
+                                            ACout = 45;
+                                        }
+                                    }
+                                    else if (AC >= 23.5)
+                                    {
+                                        if ((AC - 23.5) < (44.7 - AC))
+                                        {
+                                            ACout = 90;
+                                        }
+                                        else
+                                        {
+                                            ACout = 67.5;
+                                        }
+                                    }
+                                    else if (AC >= 3.1)
+                                    {
+                                        if ((AC - 3.1) < (23.5 - AC))
+                                        {
+                                            ACout = 112.5;
+                                        }
+                                        else
+                                        {
+                                            ACout = 90;
+                                        }
+                                    }
+                                    else if (AC <= 3.1)
+                                    {
+                                        ACout = 112.55;
+                                    }
+                                    else
+                                    {
+                                        ACout = 22.4;
+                                    }
+
+                                    System.out.println("ACout " + ACout);
+
+                                    if (AC >= 76.6)
+                                    {
+                                        if ((AC - 76.6) < (97.5 - AC))
+                                        {
+                                            ACin = 202.5;
+                                        }
+                                        else
+                                        {
+                                            ACin = 225;
+                                        }
+
+                                    }
+                                    else if (AC >= 56.4)
+                                    {
+                                        if ((AC - 56.4) < (76.6 - AC))
+                                        {
+                                            ACin = 180;
+                                        }
+                                        else
+                                        {
+                                            ACin = 202.5;
+                                        }
+                                    }
+                                    else if (AC >= 36.6)
+                                    {
+                                        if ((AC - 36.6) < (56.4 - AC))
+                                        {
+                                            ACin = 157.5;
+                                        }
+                                        else
+                                        {
+                                            ACin = 180;
+                                        }
+                                    }
+                                    else if (AC >= 16.8)
+                                    {
+                                        if ((AC - 16.8) < (36.6 - AC))
+                                        {
+                                            ACin = 135;
+                                        }
+                                        else
+                                        {
+                                            ACin = 157.5;
+                                        }
+                                    }
+                                    else if (AC >= 5.5)
+                                    {
+                                        if ((AC - 5.5) < (16.8 - AC))
+                                        {
+                                            ACin = 112.5;
+                                        }
+                                        else
+                                        {
+                                            ACin = 135;
+                                        }
+                                    }
+                                    else if (AC <= 5.5)
+                                    {
+                                        ACin = 112.5;
+                                    }
+                                    else
+                                    {
+                                        ACin = 225;
+                                    }
+
+                                    System.out.println("ACin " + ACin);
+
+                                    singleDirection = (int) (ACout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    singleDirection = (int) (ACin / 22.5);
+
+
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "BA":
+                                    BA = Math.abs(AB);
+
+                                    if (BA >= 74.7)
+                                    {
+                                        if ((BA - 74.7) < (98.7 - BA))
+                                        {
+                                            BAout = 157.5;
+                                        }
+                                        else
+                                        {
+                                            BAout = 135;
+                                        }
+
+                                    }
+                                    else if (BA >= 52)
+                                    {
+                                        if ((BA - 52) < (74.7 - BA))
+                                        {
+                                            BAout = 180;
+                                        }
+                                        else
+                                        {
+                                            BAout = 157.5;
+                                        }
+                                    }
+                                    else if (BA >= 30.5)
+                                    {
+                                        if ((BA - 30.5) < (52 - BA))
+                                        {
+                                            BAout = 202.5;
+                                        }
+                                        else
+                                        {
+                                            BAout = 180;
+                                        }
+                                    }
+                                    else if (BA >= 9.8)
+                                    {
+                                        if ((BA - 9.8) < (30.5 - BA))
+                                        {
+                                            BAout = 225;
+                                        }
+                                        else
+                                        {
+                                            BAout = 202.5;
+                                        }
+                                    }
+                                    else if (BA <= 9.8)
+                                    {
+                                        BAout = 225;
+                                    }
+                                    else
+                                    {
+                                        BAout = 135;
+                                    }
+
+                                    System.out.println("BAout " + BAout);
+
+                                    if (BA >= 69.8)
+                                    {
+                                        if ((BA - 69.8) < (90.5 - BA))
+                                        {
+                                            BAin = 315;
+                                        }
+                                        else
+                                        {
+                                            BAin = 337.5;
+                                        }
+
+                                    }
+                                    else if (BA >= 49.8)
+                                    {
+                                        if ((BA - 49.8) < (69.8 - BA))
+                                        {
+                                            BAin = 292.5;
+                                        }
+                                        else
+                                        {
+                                            BAin = 315;
+                                        }
+                                    }
+                                    else if (BA >= 30)
+                                    {
+                                        if ((BA - 30) < (49.8 - BA))
+                                        {
+                                            BAin = 270;
+                                        }
+                                        else
+                                        {
+                                            BAin = 292.5;
+                                        }
+                                    }
+                                    else if (BA >= 10.2)
+                                    {
+                                        if ((BA - 10.2) < (30 - BA))
+                                        {
+                                            BAin = 247.5;
+                                        }
+                                        else
+                                        {
+                                            BAin = 270;
+                                        }
+                                    }
+                                    else if (BA <= 10.2)
+                                    {
+                                        BAin = 247.5;
+                                    }
+                                    else
+                                    {
+                                        BAin = 337.5;
+                                    }
+
+                                    System.out.println("BAin " + BAin);
+
+                                    singleDirection = (int) (BAout / 22.5);
+
+
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    singleDirection = (int) (BAin / 22.5);
+
+
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    vibrateMotors();
+
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "CA":
+
+                                    CA = Math.abs(AC);
+                                    if (CA >= 74.7)
+                                    {
+                                        if ((CA - 74.7) < (98.7 - CA))
+                                        {
+                                            CAout = 22.5;
+                                        }
+                                        else
+                                        {
+                                            CAout = 45;
+                                        }
+
+                                    }
+                                    else if (CA >= 52)
+                                    {
+                                        if ((CA - 52) < (74.7 - CA))
+                                        {
+                                            CAout = 0; //360 would also suffice
+                                        }
+                                        else
+                                        {
+                                            CAout = 22.5;
+                                        }
+                                    }
+                                    else if (CA >= 30.5)
+                                    {
+                                        if ((CA - 30.5) < (52 - CA))
+                                        {
+                                            CAout = 337.5;
+                                        }
+                                        else
+                                        {
+                                            CAout = 0;
+                                        }
+                                    }
+                                    else if (CA >= 9.8)
+                                    {
+                                        if ((CA - 9.8) < (30.5 - CA))
+                                        {
+                                            CAout = 315;
+                                        }
+                                        else
+                                        {
+                                            CAout = 337.5;
+                                        }
+                                    }
+                                    else if (CA <= 9.8)
+                                    {
+                                        CAout = 315;
+                                    }
+                                    else
+                                    {
+                                        CAout = 45;
+                                    }
+
+                                    System.out.println("CAout " + CAout);
+
+
+                                    CA = Math.abs(AC);
+                                    if (CA >= 69.8)
+                                    {
+                                        if ((CA - 69.8) < (90.5 - CA))
+                                        {
+                                            CAin = 235;
+                                        }
+                                        else
+                                        {
+                                            CAin = 202.5;
+                                        }
+
+                                    }
+                                    else if (CA >= 49.8)
+                                    {
+                                        if ((CA - 49.8) < (69.8 - CA))
+                                        {
+                                            CAin = 247.5;
+                                        }
+                                        else
+                                        {
+                                            CAin = 235;
+                                        }
+                                    }
+                                    else if (CA >= 30)
+                                    {
+                                        if ((CA - 30) < (49.8 - CA))
+                                        {
+                                            CAin = 270;
+                                        }
+                                        else
+                                        {
+                                            CAin = 247.5;
+                                        }
+                                    }
+                                    else if (CA >= 10.2)
+                                    {
+                                        if ((CA - 10.2) < (30 - CA))
+                                        {
+                                            CAin = 292.5;
+                                        }
+                                        else
+                                        {
+                                            CAin = 270;
+                                        }
+                                    }
+                                    else if (CA <= 10.2)
+                                    {
+                                        CAin = 292.5;
+                                    }
+                                    else
+                                    {
+                                        CAin = 202.5;
+                                    }
+
+                                    System.out.println("CAin " + CAin);
+
+                                    singleDirection = (int) (CAout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    singleDirection = (int) (CAin / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                case "BC":
+                                    if (BC >= 59.4)
+                                    {
+                                        if ((BC - 59.4) < (82.5 - BC))
+                                        {
+                                            BCout = 247.5;
+                                        }
+                                        else
+                                        {
+                                            BCout = 270;
+                                        }
+
+                                    }
+                                    else if (BC >= 37.5)
+                                    {
+                                        if ((BC - 37.5) < (59.4 - BC))
+                                        {
+                                            BCout = 225;
+                                        }
+                                        else
+                                        {
+                                            BCout = 247.5;
+                                        }
+                                    }
+                                    else if (BC >= 16.6)
+                                    {
+                                        if ((BC - 16.6) < (37.5 - BC))
+                                        {
+                                            BCout = 202.5;
+                                        }
+                                        else
+                                        {
+                                            BCout = 225;
+                                        }
+                                    }
+                                    else if (BC >= 9)
+                                    {
+                                        if ((BC - 9) < (16.6 - BC))
+                                        {
+                                            BCout = 180;
+                                        }
+                                        else
+                                        {
+                                            BCout = 202.5;
+                                        }
+                                    }
+                                    else if (BC <= 9)
+                                    {
+                                        BCout = 180;
+                                    }
+                                    else
+                                    {
+                                        BCout = 270;
+                                    }
+                                    System.out.println("BCout " + BCout);
+
+                                    if (BC >= 63.1)
+                                    {
+                                        if ((BC - 63.1) < (83.5 - BC))
+                                        {
+                                            BCin = 112.5;
+                                        }
+                                        else
+                                        {
+                                            BCin = 90;
+                                        }
+
+                                    }
+                                    else if (BC >= 43.2)
+                                    {
+                                        if ((BC - 43.2) < (63.1 - BC))
+                                        {
+                                            BCin = 135;
+                                        }
+                                        else
+                                        {
+                                            BCin = 112.5;
+                                        }
+                                    }
+                                    else if (BC >= 23.4)
+                                    {
+                                        if ((BC - 23.4) < (43.2 - BC))
+                                        {
+                                            BCin = 157.5;
+                                        }
+                                        else
+                                        {
+                                            BCin = 135;
+                                        }
+                                    }
+                                    else if (BC >= 3.6)
+                                    {
+                                        if ((BC - 3.6) < (23.4 - BC))
+                                        {
+                                            BCin = 180;
+                                        }
+                                        else
+                                        {
+                                            BCin = 157.5;
+                                        }
+                                    }
+                                    else if (BC <= 3.6)
+                                    {
+                                        BCin = 180;
+                                    }
+                                    else
+                                    {
+                                        BCin = 90;
+                                    }
+
+
+                                    System.out.println("BCin " + BCin);
+
+
+                                    singleDirection = (int) (BCout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    singleDirection = (int) (BCin / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "CB":
+
+                                    CB = Math.abs(BC);
+                                    if (CB >= 59.4)
+                                    {
+                                        if ((CB - 59.4) < (82.5 - CB))
+                                        {
+                                            CBout = 292.5;
+                                        }
+                                        else
+                                        {
+                                            CBout = 270;
+                                        }
+
+                                    }
+                                    else if (CB >= 37.5)
+                                    {
+                                        if ((CB - 37.5) < (59.4 - CB))
+                                        {
+                                            CBout = 315;
+                                        }
+                                        else
+                                        {
+                                            CBout = 292.5;
+                                        }
+                                    }
+                                    else if (CB >= 16.6)
+                                    {
+                                        if ((CB - 16.6) < (37.5 - CB))
+                                        {
+                                            CBout = 337.5;
+                                        }
+                                        else
+                                        {
+                                            CBout = 315;
+                                        }
+                                    }
+                                    else if (CB >= 9)
+                                    {
+                                        if ((CB - 9) < (16.6 - CB))
+                                        {
+                                            CBout = 0;
+                                        }
+                                        else
+                                        {
+                                            CBout = 337.5;
+                                        }
+                                    }
+                                    else if (CB <= 9)
+                                    {
+                                        CBout = 0;
+                                    }
+                                    else
+                                    {
+                                        CBout = 270;
+                                    }
+
+                                    System.out.println("CBout " + CBout);
+
+
+                                    CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
+                                    if (CB >= 63.1)
+                                    {
+                                        if ((CB - 63.1) < (83.5 - CB))
+                                        {
+                                            CBin = 67.5;
+                                        }
+                                        else
+                                        {
+                                            CBin = 90;
+                                        }
+
+                                    }
+                                    else if (CB >= 43.2)
+                                    {
+                                        if ((CB - 43.2) < (63.1 - CB))
+                                        {
+                                            CBin = 45;
+                                        }
+                                        else
+                                        {
+                                            CBin = 67.5;
+                                        }
+                                    }
+                                    else if (CB >= 23.4)
+                                    {
+                                        if ((CB - 23.4) < (43.2 - CB))
+                                        {
+                                            CBin = 22.5;
+                                        }
+                                        else
+                                        {
+                                            CBin = 45;
+                                        }
+                                    }
+                                    else if (CB >= 3.6)
+                                    {
+                                        if ((CB - 3.6) < (23.4 - CB))
+                                        {
+                                            CBin = 0;
+                                        }
+                                        else
+                                        {
+                                            CBin = 22.5;
+                                        }
+                                    }
+                                    else if (CB <= 3.6)
+                                    {
+                                        CBin = 0;
+                                    }
+                                    else
+                                    {
+                                        CBin = 90;
+                                    }
+
+                                    System.out.println("CBin " + CBin);
+
+                                    singleDirection = (int) (CBout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    singleDirection = (int) (CBin / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                default:
+                                    System.out.println("Do Nothing");
+                            }
+                        }
+                        else if(largerEnviroment == false) {
+                            switch (timeOrder) {
+                                case "ABC":
+                                    if (AB > 60) {
+                                        ABout = 210;
+                                    } else {
+                                        ABout = (AB * 2) + 90;
+                                    }
+                                    //BCin = ((((BC - 30) * 2)  + 30) + 90); changing
+                                    BCin = 210 - (BC * 2);
+                                    ACin = ((AC * 2) + 90);
+
+                                    System.out.println("AB out " + ABout);
+                                    System.out.println("BCin " + BCin);
+                                    System.out.println("ACin " + ACin);
+
+                                    makeDirectionAllEffects(ABout, BCin, ACin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "ACB":
+                                    //adding boundary
+                                    if (AC > 60) {
+                                        ACout = 330;
+                                    } else if (AC > 46 && AC < 61) {
+                                        ACout = (90 - (AB * 2)) + 360;
+                                    } else {
+                                        ACout = (90 - (AB * 2));
+                                    }
+
+
+                                    CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
+                                    CBin = (((CB - 30) * 2) + 30);
+
+                                    if (CBin < 0) {
+                                        CBin = CBin + 360;
+
+                                    }
+
+                                    ABin = (90 - (AB * 2));
+
+                                    if (ABin < 0) {
+                                        ABin = ABin + 360;
+                                    }
+
+                                    System.out.println("ACout " + ACout);
+                                    System.out.println("CBin " + CBin);
+                                    System.out.println("ABin " + ABin);
+
+
+                                    makeDirectionAllEffects(ACout, CBin, ABin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                case "BAC":
+
+                                    BA = Math.abs(AB);
+                                    if (BA > 60) {
+                                        BAout = 90;
+                                    } else {
+                                        BAout = ((180 - (120 + BA)) * 2) + 90;
+                                    }
+
+                                    ACin = ((AC * 2) + 90);
+
+                                    //BCin = ((((BC - 30) * 2)  + 30) + 90);  //changing
+                                    BCin = 210 - (BC * 2);
+
+                                    System.out.println("BAout " + BAout);
+                                    System.out.println("BCin " + BCin);
+                                    System.out.println("ACin " + ACin);
+
+                                    makeDirectionAllEffects(BAout, BCin, ACin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                case "BCA":
+                                    if (BC > 60) {
+                                        BCout = 330;
+                                    } else {
+                                        BCout = (BC * 2) + 210;
+                                    }
+
+                                    BA = Math.abs(AB);
+
+                                    BAin = ((BA * 2) + 210);
+
+                                    if (BAin > 360) {
+                                        BAin = BAin - 360;
+                                    }
+
+
+                                    CA = Math.abs(AC);
+                                    CAin = (330 - (CA * 2));
+
+                                    System.out.println("BCout " + BCout);
+                                    System.out.println("BAin " + BAin);
+                                    System.out.println("CAin " + CAin);
+
+                                    makeDirectionAllEffects(BCout, BAin, CAin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "CAB":
+                                    CA = Math.abs(AC);
+
+                                    if (CA > 60) {
+                                        CAout = 90;
+                                    } else if (CA < 15) {
+                                        CAout = (90 - ((180 - (120 + CA)) * 2)) + 360;
+                                    } else {
+                                        CAout = 90 - ((180 - (120 + CA)) * 2);
+                                    }
+
+
+                                    CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
+                                    CBin = (((CB - 30) * 2) + 30);
+
+                                    if (CBin < 0) {
+                                        CBin = CBin + 360;
+
+                                    }
+
+                                    ABin = (90 - (AB * 2));
+
+                                    if (ABin < 0) {
+                                        ABin = ABin + 360;
+                                    }
+
+                                    System.out.println("CAout " + CAout);
+                                    System.out.println("CBin " + CBin);
+                                    System.out.println("ABin " + ABin);
+
+                                    makeDirectionAllEffects(CAout, CBin, ABin, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "CBA":
+
+                                    CA = Math.abs(AC);
+                                    CAin = (330 - (CA * 2));
+
+                                    BA = Math.abs(AB);
+                                    BAin = ((BA * 2) + 210);
+
+                                    if (BAin > 360) {
+                                        BAin = BAin - 360;
+                                    }
+
+                                    CB = Math.abs(BC);
+                                    if (CB > 60) {
+                                        CBout = 210;
+                                    } else {
+                                        CBout = Math.abs(((180 - (120 + CB)) * 2)) + 210;
+                                    }
+
+                                    System.out.println("CAin " + CAin);
+                                    System.out.println("BAin " + BAin);
+                                    System.out.println("CBout " + CBout);
+
+                                    makeDirectionAllEffects(CAin, BAin, CBout, timeOrder);
+                                    Thread.sleep(1000);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "AB":
+                                    if (AB > 60) {
+                                        ABout = 210;
+                                    } else {
+                                        ABout = (AB * 2) + 90;
+                                    }
+                                    System.out.println("ABout " + ABout);
+
+
+                                    ABin = (90 - (AB * 2));                                     //could be any of the two directions
+
+                                    if (ABin < 0) {
+                                        ABin = ABin + 360;
+                                    }
+                                    System.out.println("ABin " + ABin);
+
+                                    singleDirection = (int) (ABout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    singleDirection = (int) (ABin / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                case "AC":
+                                    //adding boundary
+                                    if (AC > 60) {
+                                        ACout = 330;
+                                    } else if (AC > 46 && AC < 61) {
+                                        ACout = (90 - (AB * 2)) + 360;
+                                    } else {
+                                        ACout = (90 - (AB * 2));
+                                    }
+                                    System.out.println("ACout " + ACout);
+
+                                    ACin = ((AC * 2) + 90);
+                                    System.out.println("ACin " + ACin);
+
+                                    singleDirection = (int) (ACout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    singleDirection = (int) (ACin / 22.5);
+
+
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "BA":
+                                    BA = Math.abs(AB);
+                                    if (BA > 60) {
+                                        BAout = 90;
+                                    } else {
+                                        BAout = ((180 - (120 + BA)) * 2) + 90;
+                                    }
+                                    System.out.println("BAout " + BAout);
+
+                                    BAin = ((BA * 2) + 210);
+
+                                    if (BAin > 360) {
+                                        BAin = BAin - 360;
+                                    }
+
+                                    System.out.println("BAin " + BAin);
+
+                                    singleDirection = (int) (BAout / 22.5);
+
+
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    singleDirection = (int) (BAin / 22.5);
+
+
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    vibrateMotors();
+
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "CA":
+
+                                    CA = Math.abs(AC);
+                                    if (CA > 60) {
+                                        CAout = 90;
+                                    } else if (CA < 15) {
+                                        CAout = (90 - ((180 - (120 + CA)) * 2)) + 360;
+                                    } else {
+                                        CAout = 90 - ((180 - (120 + CA)) * 2);
+                                    }
+
+
+                                    System.out.println("CAout " + CAout);
+
+
+                                    CA = Math.abs(AC);
+                                    CAin = (330 - (CA * 2));
+
+                                    System.out.println("CAin " + CAin);
+
+                                    singleDirection = (int) (CAout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    singleDirection = (int) (CAin / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                case "BC":
+                                    if (BC > 60) {
+                                        BCout = 330;
+                                    } else {
+                                        BCout = (BC * 2) + 210;
+                                    }
+                                    System.out.println("BCout " + BCout);
+
+                                    BCin = 210 - (BC * 2);
+
+                                    System.out.println("BCin " + BCin);
+
+
+                                    singleDirection = (int) (BCout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    singleDirection = (int) (BCin / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+                                    break;
+                                case "CB":
+
+                                    CB = Math.abs(BC);
+                                    if (CB > 60) {
+                                        CBout = 210;
+                                    } else {
+                                        CBout = Math.abs(((180 - (120 + CB)) * 2)) + 210;
+                                    }
+
+                                    System.out.println("CBout " + CBout);
+
+
+                                    CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
+                                    CBin = (((CB - 30) * 2) + 30);
+
+                                    if (CBin < 0) {
+                                        CBin = CBin + 360;
+
+                                    }
+
+                                    System.out.println("CB " + CB);
+
+                                    singleDirection = (int) (CBout / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+
+                                    singleDirection = (int) (CB / 22.5);
+                                    directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
+                                    indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
+
+                                    vibrateMotors();
+
+                                    Thread.sleep(500);
+                                    disableAllDirectionalEffects();
+
+
+                                    break;
+                                default:
+                                    System.out.println("Do Nothing");
+                            }
 
-
-
-                                CA = Math.abs(AC);
-                                CAin = (330 - (CA * 2));
-
-                                System.out.println("BCout " + BCout);
-                                System.out.println("BAin " + BAin);
-                                System.out.println("CAin " + CAin);
-
-                                makeDirectionAllEffects(BCout, BAin, CAin, timeOrder);
-                                Thread.sleep(1000);
-                                disableAllDirectionalEffects();
-
-                                break;
-                            case "CAB":
-                                CA = Math.abs(AC);
-
-                                if(CA > 60)
-                                {
-                                    CAout = 90;
-                                }
-                                else if(CA < 15)
-                                {
-                                    CAout = (90 - ((180 - (120 + CA)) * 2)) + 360;
-                                }
-                                else
-                                {
-                                    CAout = 90 - ((180 - (120 + CA)) * 2);
-                                }
-
-
-                                CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
-                                CBin = (((CB - 30) * 2)  + 30);
-
-                                if(CBin < 0)
-                                {
-                                    CBin = CBin + 360;
-
-                                }
-
-                                ABin = (90 - (AB * 2));
-
-                                if(ABin < 0)
-                                {
-                                    ABin = ABin + 360;
-                                }
-
-                                System.out.println("CAout " + CAout);
-                                System.out.println("CBin " + CBin);
-                                System.out.println("ABin " + ABin);
-
-                                makeDirectionAllEffects(CAout, CBin, ABin, timeOrder);
-                                Thread.sleep(1000);
-                                disableAllDirectionalEffects();
-
-                                break;
-                            case "CBA":
-
-                                CA = Math.abs(AC);
-                                CAin = (330 - (CA * 2));
-
-                                BA = Math.abs(AB);
-                                BAin = ((BA * 2) + 210);
-
-                                if(BAin > 360)
-                                {
-                                    BAin = BAin - 360;
-                                }
-
-                                CB = Math.abs(BC);
-                                if(CB > 60)
-                                {
-                                    CBout = 210;
-                                }
-                                else {
-                                    CBout = Math.abs(((180 - (120 + CB)) * 2)) + 210;
-                                }
-
-                                System.out.println("CAin " + CAin);
-                                System.out.println("BAin " + BAin);
-                                System.out.println("CBout " + CBout);
-
-                                makeDirectionAllEffects(CAin, BAin, CBout, timeOrder);
-                                Thread.sleep(1000);
-                                disableAllDirectionalEffects();
-
-                                break;
-                            case "AB":
-                                if(AB > 60)
-                                {
-                                    ABout = 210;
-                                }
-                                else {
-                                    ABout = (AB * 2) + 90;
-                                }
-                                System.out.println("ABout " + ABout);
-
-
-                                ABin = (90 - (AB * 2));                                     //could be any of the two directions
-
-                                if(ABin < 0)
-                                {
-                                    ABin = ABin + 360;
-                                }
-                                System.out.println("ABin " + ABin);
-
-                                singleDirection = (int) (ABout / 22.5);
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-
-
-                                singleDirection = (int) (ABin / 22.5);
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-
-                                vibrateMotors();
-
-                                Thread.sleep(500);
-                                disableAllDirectionalEffects();
-
-
-                                break;
-                            case "AC":
-                                //adding boundary
-                                if(AC > 60)
-                                {
-                                    ACout = 330;
-                                }
-                                else if(AC > 46 && AC < 61)
-                                {
-                                    ACout = (90 - (AB * 2)) + 360 ;
-                                }
-                                else {
-                                    ACout = (90 - (AB * 2));
-                                }
-                                System.out.println("ACout " + ACout);
-
-                                ACin = ((AC * 2) + 90);
-                                System.out.println("ACin " + ACin);
-
-                                singleDirection = (int) (ACout / 22.5);
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-
-
-                                singleDirection = (int) (ACin / 22.5);
-
-
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-
-                                vibrateMotors();
-
-                                Thread.sleep(500);
-                                disableAllDirectionalEffects();
-
-                                break;
-                            case "BA":
-                                BA = Math.abs(AB);
-                                if(BA > 60)
-                                {
-                                    BAout = 90;
-                                }
-                                else {
-                                    BAout = ((180 - (120 + BA)) * 2) + 90;
-                                }
-                                System.out.println("BAout " + BAout);
-
-                                BAin = ((BA * 2) + 210);
-
-                                if(BAin > 360)
-                                {
-                                    BAin = BAin - 360;
-                                }
-
-                                System.out.println("BAin " + BAin);
-
-                                singleDirection = (int) (BAout / 22.5);
-
-
-
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-                                singleDirection = (int) (BAin / 22.5);
-
-
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-                                vibrateMotors();
-
-
-                                Thread.sleep(500);
-                                disableAllDirectionalEffects();
-
-                                break;
-                            case "CA":
-
-                                CA = Math.abs(AC);
-                                if(CA > 60)
-                                {
-                                    CAout = 90;
-                                }
-                                else if(CA < 15)
-                                {
-                                    CAout = (90 - ((180 - (120 + CA)) * 2)) + 360;
-                                }
-                                else {
-                                    CAout = 90 - ((180 - (120 + CA)) * 2);
-                                }
-
-
-                                System.out.println("CAout " + CAout);
-
-
-                                CA = Math.abs(AC);
-                                CAin = (330 - (CA * 2));
-
-                                System.out.println("CAin " + CAin);
-
-                                singleDirection = (int) (CAout / 22.5);
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-
-                                singleDirection = (int) (CAin / 22.5);
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-                                vibrateMotors();
-
-                                Thread.sleep(500);
-                                disableAllDirectionalEffects();
-
-
-                                break;
-                            case "BC":
-                                if(BC > 60)
-                                {
-                                    BCout = 330;
-                                }
-                                else {
-                                    BCout = (BC * 2) + 210;
-                                }
-                                System.out.println("BCout " + BCout);
-
-                                BCin = 210 - (BC * 2);
-
-                                System.out.println("BCin " + BCin);
-
-
-                                singleDirection = (int) (BCout / 22.5);
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-                                singleDirection = (int) (BCin / 22.5);
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-
-                                vibrateMotors();
-
-                                Thread.sleep(500);
-                                disableAllDirectionalEffects();
-
-                                break;
-                            case "CB":
-
-                                CB = Math.abs(BC);
-                                if(CB > 60)
-                                {
-                                    CBout = 210;
-                                }
-                                else {
-                                    CBout = Math.abs(((180 - (120 + CB)) * 2)) + 210;
-                                }
-
-                                System.out.println("CBout " + CBout);
-
-
-                                CB = Math.abs(BC);   // may be wrong - but way of reversing BC to CB
-                                CBin = (((CB - 30) * 2)  + 30);
-
-                                if(CBin < 0)
-                                {
-                                    CBin = CBin + 360;
-
-                                }
-
-                                System.out.println("CB " + CB);
-
-                                singleDirection = (int) (CBout / 22.5);
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-
-                                singleDirection = (int) (CB / 22.5);
-                                directionalIndicators.get(singleDirection).setColorFilter(getResources().getColor(android.R.color.holo_orange_dark));
-                                indicatorColourTracker.set(singleDirection, String.valueOf(android.R.color.holo_orange_dark));
-
-                                vibrateMotors();
-
-                                Thread.sleep(500);
-                                disableAllDirectionalEffects();
-
-
-                                break;
-                            default:
-                                System.out.println("Do Nothing");
                         }
 
                         System.out.println("debuging  testing");
