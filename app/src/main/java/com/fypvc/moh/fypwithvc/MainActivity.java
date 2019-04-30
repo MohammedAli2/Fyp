@@ -4328,7 +4328,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
             int indicator3 = 0;
 
 
-
+//
             if(Double.isNaN(angle1))
             {
 
