@@ -277,6 +277,14 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
             @Override
             public void onClick(View v) {
 
+                SharedPreferences load = getSharedPreferences("Preferences", 0);        //loadSave
+                String saved = load.getString("triggers", "");
+                String[] getSavedTriggers = saved.split(",");
+                for(int i = 0; i < getSavedTriggers.length; i++)
+                {
+                    triggerArray.set(i, getSavedTriggers[i]);
+                }
+
 
                 dialogSTT1();     //load dialog
             }
@@ -4851,7 +4859,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
             {
                 try {
                     int motorIndex;
-                    if (index != 0 && (index % 2 == 0)) //if index even then its a motor so vibrate it
+                    if (index != 0 /*&& (index % 2 == 0)*/) //if index even then its a motor so vibrate it
                     {
                         motorIndex = index / 2;
                         btSocket.getOutputStream().write(String.valueOf(motorIndex).getBytes());
@@ -4866,6 +4874,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                    //btSocket.getOutputStream().write(String.valueOf(index).getBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
+                    System.out.println("Error at vibrate motros sectioin");
                 }
 
 
@@ -5290,12 +5299,34 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
         //String timeStamp = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
         speechToOnScreenText.append(currentDateTimeString + " : "  + liveSpeechResult + "\n");
-        System.out.println("TESTSSSS " + liveSpeechResult);
+        //System.out.println("TESTSSSS " + liveSpeechResult);
         scrollSTT.fullScroll(View.FOCUS_DOWN); //scrolls down
-        if(liveSpeechResult.toLowerCase().contains("test".toLowerCase()))
+
+
+        if(t1 != null && (liveSpeechResult.toLowerCase().contains(t1.getText().toString().toLowerCase())))
         {
             vibratePhone();
         }
+        else if (t2 != null && (liveSpeechResult.toLowerCase().contains(t2.getText().toString().toLowerCase())))
+        {
+            vibratePhone();
+        }
+        else if (t3 != null && (liveSpeechResult.toLowerCase().contains(t3.getText().toString().toLowerCase())))
+        {
+            vibratePhone();
+        }
+        else if (t4 != null && (liveSpeechResult.toLowerCase().contains(t4.getText().toString().toLowerCase())))
+        {
+            vibratePhone();
+        }
+        else if (t5 != null && (liveSpeechResult.toLowerCase().contains(t5.getText().toString().toLowerCase())))
+        {
+            vibratePhone();
+        }
+       /* if((liveSpeechResult.toLowerCase().contains(t1.getText().toString().toLowerCase())) || (liveSpeechResult.toLowerCase().contains(t2.getText().toString().toLowerCase())) || (liveSpeechResult.toLowerCase().contains(t3.getText().toString().toLowerCase())) || (liveSpeechResult.toLowerCase().contains(t4.getText().toString().toLowerCase())) || (liveSpeechResult.toLowerCase().contains(t5.getText().toString().toLowerCase())))
+        {
+            vibratePhone();
+        }*/
 
 
     }
@@ -5318,9 +5349,9 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 //https://stackoverflow.com/questions/13950338/how-to-make-an-android-device-vibrate
     private void vibratePhone() {
         if (Build.VERSION.SDK_INT >= 26) {
-            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(1500, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
-            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(500);
+            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(1500);
         }
     }
 
@@ -5416,7 +5447,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
 
 
-        dialogBoxBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBoxBuilder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
@@ -5425,6 +5456,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
         dialogBoxBuilder.show();
     }
+
 
 
     private void dialogTrigger2(final Button triggerBtnSelected)
@@ -5477,7 +5509,7 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
                 }
 
 
-               /* StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
                 for(String allPremadesStr : triggerArray)
                 {
                     sb.append(allPremadesStr);
@@ -5486,13 +5518,13 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
                 SharedPreferences saving = getSharedPreferences("Preferences", 0);
                 SharedPreferences.Editor editSave = saving.edit();
-                editSave.putString("premades", sb.toString());
-                editSave.commit();*/
+                editSave.putString("triggers", sb.toString());
+                editSave.commit();
 
             }
         });
 
-        dialogBoxBuilder2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBoxBuilder2.setNegativeButton(" ", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
