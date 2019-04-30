@@ -150,11 +150,23 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
     Switch largerEnvSwitch;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //motor vibration testing buton
+        Button allMotorVibrationBtn = (Button) findViewById(R.id.motorTestBtn);
+
+        allMotorVibrationBtn.setOnClickListener(new View.OnClickListener()  {
+            @Override
+            public void onClick(View view)
+            {
+                testMotorsSubScreen();
+            }
+        });
 
         //TTS
         ttsBtn = (Button) findViewById(R.id.ttsButton);
@@ -484,6 +496,154 @@ public class MainActivity extends AppCompatActivity implements OnDSListener {   
 
 
     }
+
+
+    // motor testing buttons
+    private void testMotorsSubScreen()
+    {
+        AlertDialog.Builder dialogBoxBuilder = new AlertDialog.Builder(this);
+        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+        View motorTstView = layoutInflater.inflate(R.layout.motortesting, null);
+
+
+        dialogBoxBuilder.setView(motorTstView);
+
+
+        Button motor1 = motorTstView.findViewById(R.id.motor1);
+        Button motor2 = motorTstView.findViewById(R.id.motor2);
+        Button motor3 = motorTstView.findViewById(R.id.motor3);
+        Button motor4 = motorTstView.findViewById(R.id.motor4);
+        Button motor5 = motorTstView.findViewById(R.id.motor5);
+        Button motor6 = motorTstView.findViewById(R.id.motor6);
+        Button motor7 = motorTstView.findViewById(R.id.motor7);
+        Button motor8 = motorTstView.findViewById(R.id.motor8);
+
+        motor1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    btSocket.getOutputStream().write("t".getBytes());//
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Testing motor 1");
+            }
+        });
+
+        motor2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    btSocket.getOutputStream().write("T".getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Testing motor 2");
+            }
+        });
+
+        motor3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    btSocket.getOutputStream().write("u".getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Testing motor 3");
+            }
+        });
+
+        motor4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    btSocket.getOutputStream().write("U".getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Testing motor 4");
+            }
+        });
+
+        motor5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    btSocket.getOutputStream().write("v".getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Testing motor 5");
+            }
+        });
+
+        motor6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    btSocket.getOutputStream().write("V".getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Testing motor 6");
+            }
+        });
+
+        motor7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    btSocket.getOutputStream().write("w".getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Testing motor 7");
+            }
+        });
+
+        motor8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    btSocket.getOutputStream().write("W".getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Testing motor 8");
+            }
+        });
+
+
+
+        dialogBoxBuilder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        dialogBoxBuilder.show();
+
+    }
+
 
     //tts
     private void dialogBoxtts()
